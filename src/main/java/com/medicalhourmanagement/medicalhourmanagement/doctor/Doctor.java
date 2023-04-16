@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name="DOCTOR")
+@Table(name="DOCTORS")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,11 +35,6 @@ public class Doctor {
     @NotBlank(message = "LAST NAME CANNOT BE NULL")
     @Column(name ="LAST_NAME")
     private String lastName;
-
-    @Size(min = 1, max = 50, message = "LAST NAME MUST BE BETWEEN {min} AND {max} CHARACTERS LONG")
-    @NotBlank(message = "LAST NAME CANNOT BE NULL")
-    @Column(name ="EMAIL")
-    private String email;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "doctor")
     @JsonManagedReference("doctor-appointments")

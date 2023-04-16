@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name="PATIENT")
+@Table(name="PATIENTS")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

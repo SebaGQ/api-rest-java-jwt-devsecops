@@ -3,6 +3,7 @@ package com.medicalhourmanagement.medicalhourmanagement.exceptions.controlleradv
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,6 +41,14 @@ public class GlobalExceptionHandler {
         ErrorDto error = new ErrorDto("P-400", ex.getMessage());
         return new ResponseEntity<>(error, status);
     }
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<Object> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErrorDto error = new ErrorDto("P-400", ex.getMessage());
+        return new ResponseEntity<>(error, status);
+    }
+
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleRuntimeException(RuntimeException ex) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
