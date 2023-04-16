@@ -108,9 +108,9 @@
         }
 
         /**
+         * Se realizan validaciones a la hora de la cita, de una manera bastante simple
          *  Se valida que la hora de una cita debe estar entre 08 y 18 hrs.
          *  También se valida que una nueva cita no tope con otra.
-         *  El funcionamiento de esto es bastante simple, ya que la idea del proyecto es mostrar conocimientos estructurales.
          */
        private void validateTime(@NonNull final LocalDateTime appointmentTime, @NonNull final Long doctorId, @NonNull final Long patientId) {
             List<Appointment> appointments = appointmentRepository.findByDoctorIdOrPatientId(doctorId,patientId);
