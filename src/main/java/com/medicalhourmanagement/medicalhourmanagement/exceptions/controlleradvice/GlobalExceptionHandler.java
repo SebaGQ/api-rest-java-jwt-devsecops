@@ -48,7 +48,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, status);
     }
 
-
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleRuntimeException(RuntimeException ex) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
