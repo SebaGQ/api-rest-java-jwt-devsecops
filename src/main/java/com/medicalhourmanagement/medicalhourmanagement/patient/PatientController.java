@@ -47,4 +47,5 @@ public class PatientController {
         patientService.deletePatientById(id);
         return new PatientResponse<>("DELETED", String.valueOf(HttpStatus.NO_CONTENT), "PATIENT ID: "+id+" SUCCESSFULLY DELETED");
     }
+
 }
