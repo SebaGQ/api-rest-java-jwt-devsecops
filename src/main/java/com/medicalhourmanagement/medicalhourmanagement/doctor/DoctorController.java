@@ -1,7 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.doctor;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +29,6 @@ public class DoctorController {
         return new DoctorResponse<>("SUCCESS", String.valueOf(HttpStatus.OK), "DOCTOR ID: " + id + " SUCCESSFULLY READED",
                 doctorService.getDoctorById(id));
     }
-
-
-
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public DoctorResponse<DoctorRest> saveDoctor(@Valid @RequestBody DoctorRest doctor) {
