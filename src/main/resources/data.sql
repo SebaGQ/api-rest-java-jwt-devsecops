@@ -1,3 +1,4 @@
+
 INSERT INTO DOCTORS (first_name, last_name) VALUES ('Juan', 'Pérez');
 INSERT INTO DOCTORS (first_name, last_name) VALUES ('María', 'García');
 INSERT INTO DOCTORS (first_name, last_name) VALUES ('José', 'Martínez');
