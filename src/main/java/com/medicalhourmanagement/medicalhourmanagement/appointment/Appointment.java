@@ -39,7 +39,7 @@ public class Appointment {
     private LocalDateTime date;
 
     /**
-     * La notación @JsonBackReference se usa en conjunto con @JsonManagedReference(En la otra entidad) para evitar referencias circulares
+     * La notación @JsonBackReference se usa en conjunto con @JsonManagedReference(En la otra entidad de la relacion) para evitar referencias circulares
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id")

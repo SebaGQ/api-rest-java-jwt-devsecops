@@ -108,7 +108,7 @@
         }
 
         /**
-         * Se realizan validaciones a la hora de la cita, de una manera bastante simple
+         * Se realizan validaciones a la hora de la cita de una manera bastante simple
          *  Se valida que la hora de una cita debe estar entre 08 y 18 hrs.
          *  También se valida que una nueva cita no tope con otra.
          */
