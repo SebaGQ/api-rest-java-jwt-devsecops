@@ -30,7 +30,7 @@ public class AppointmentController {
 
     @GetMapping("/{id}")
     public AppointmentResponse<AppointmentRest> getAppointmentById(@PathVariable Long id){
-        return new AppointmentResponse<>("SUCCESS", String.valueOf(HttpStatus.OK), "APPOINTMENT ID:"+id+" SUCCESSFULLY READED",
+        return new AppointmentResponse<>("SUCCESS", String.valueOf(HttpStatus.OK), "APPOINTMENT ID: "+id+" SUCCESSFULLY READED",
                 appointmentService.getAppointmentById(id));
     }
 
@@ -46,14 +46,14 @@ public class AppointmentController {
     }
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public AppointmentResponse<AppointmentRest> updateAppointment(@PathVariable Long id, @Valid @RequestBody AppointmentRest appointmentRequest){
-        return new AppointmentResponse<>("SUCCESS", String.valueOf(HttpStatus.OK), "APPOINTMENT ID:"+id+" SUCCESSFULLY UPDATED",
+        return new AppointmentResponse<>("SUCCESS", String.valueOf(HttpStatus.OK), "APPOINTMENT ID: "+id+" SUCCESSFULLY UPDATED",
                 appointmentService.updateAppointment(id, appointmentRequest));
     }
 
     @DeleteMapping(value = "/{id}")
     public AppointmentResponse<String> deleteAppointment(@PathVariable Long id){
         appointmentService.deleteAppointmentById(id);
-        return new AppointmentResponse<>("DELETED", String.valueOf(HttpStatus.NO_CONTENT), "APPOINTMENT ID:"+id+" SUCCESSFULLY DELETED");
+        return new AppointmentResponse<>("DELETED", String.valueOf(HttpStatus.NO_CONTENT), "APPOINTMENT ID: "+id+" SUCCESSFULLY DELETED");
     }
 
 }

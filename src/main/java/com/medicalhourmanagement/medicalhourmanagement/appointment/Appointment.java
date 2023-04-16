@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  * objetivo de este proyecto es mostrar un buen manejo en la estructura de la aplicación y las buenas prácticas.
  */
 @Entity
-@Table(name="APPOINTMENT")
+@Table(name="APPOINTMENTS")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

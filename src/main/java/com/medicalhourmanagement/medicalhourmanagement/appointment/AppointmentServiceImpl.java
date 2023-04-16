@@ -61,7 +61,7 @@
             Patient patient = mapper.map(patientService.getPatientById(createAppointmentRest.getPatient()), Patient.class);
             Doctor doctor = mapper.map(doctorService.getDoctorById(createAppointmentRest.getDoctor()), Doctor.class);
 
-            validateTime(createAppointmentRest.getDate(), doctor.getId());
+            validateTime(createAppointmentRest.getDate(), doctor.getId(),patient.getId());
 
             Appointment appointment = new Appointment();
             appointment.setDate(createAppointmentRest.getDate());
@@ -110,10 +110,10 @@
         /**
          *  Se valida que la hora de una cita debe estar entre 08 y 18 hrs.
          *  También se valida que una nueva cita no tope con otra.
-         *  La lógica de esta validación es bastante simple, ya que la idea del proyecto es mostrar conocimientos estructurales.
+         *  El funcionamiento de esto es bastante simple, ya que la idea del proyecto es mostrar conocimientos estructurales.
          */
-       private void validateTime(@NonNull final LocalDateTime appointmentTime, @NonNull final Long doctorId) {
-            List<Appointment> appointments = appointmentRepository.findByDoctorId(doctorId);
+       private void validateTime(@NonNull final LocalDateTime appointmentTime, @NonNull final Long doctorId, @NonNull final Long patientId) {
+            List<Appointment> appointments = appointmentRepository.findByDoctorIdOrPatientId(doctorId,patientId);
 
             int appointmentHour = appointmentTime.getHour();
             if (appointmentHour < 8 || appointmentHour >= 18) {
