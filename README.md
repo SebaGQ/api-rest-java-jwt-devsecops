@@ -3,4 +3,3 @@ Esta pequeña API REST construida usando Spring Booy y Java, ha sido desarrollad
 
 En las clases del paquete appointment están comentadas algunas de estas prácticas.
 
-Pendiente: Pruebas unitarias
