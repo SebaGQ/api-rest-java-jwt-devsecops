@@ -50,7 +50,7 @@ public class Patient implements UserDetails {
   private Role role;
 
   @OneToMany(mappedBy = "patient", fetch = FetchType.EAGER)
-  private List<Token> tokens;
+  private transient List<Token> tokens;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

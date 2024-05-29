@@ -4,6 +4,7 @@ import com.medicalhourmanagement.medicalhourmanagement.dtos.AppointmentDTO;
 import com.medicalhourmanagement.medicalhourmanagement.services.AppointmentService;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.RequestAppointmentDTO;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api/v1/appointments")
+@RequiredArgsConstructor
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
-    public AppointmentController(AppointmentService appointmentService){
-        this.appointmentService = appointmentService;
-    }
 
     @GetMapping
     public ResponseEntity<List<AppointmentDTO>> getAppointments() {

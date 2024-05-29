@@ -23,6 +23,7 @@ public class AuthenticationController {
 
   private final AuthenticationServiceImpl service;
 
+
   @PostMapping("/register")
   public ResponseEntity<AuthenticationResponseDTO> register(
       @RequestBody @Valid RegisterRequestDTO request

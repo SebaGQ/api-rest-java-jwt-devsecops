@@ -8,6 +8,7 @@ import com.medicalhourmanagement.medicalhourmanagement.dtos.PatientDTO;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.PatientRepository;
 import com.medicalhourmanagement.medicalhourmanagement.services.PatientService;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,25 +22,17 @@ import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
-
-
     private final PasswordEncoder passwordEncoder;
-
-    public PatientServiceImpl(PatientRepository patientRepository, PasswordEncoder passwordEncoder, PatientRepository repository) {
-        this.patientRepository = patientRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public static final ModelMapper mapper = new ModelMapper();
+    public final ModelMapper mapper;
 
     @Override
     public List<PatientDTO> getPatients(){
         List<Patient> patients = patientRepository.findAll();
-        return patients.stream().map(this::convertToRest)
-                .collect(Collectors.toList());
+        return patients.stream().map(this::convertToRest).toList();
     }
 
     @Override

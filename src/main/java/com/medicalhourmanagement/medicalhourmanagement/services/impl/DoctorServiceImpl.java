@@ -7,6 +7,7 @@ import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.InternalS
 import com.medicalhourmanagement.medicalhourmanagement.repositories.DoctorRepository;
 import com.medicalhourmanagement.medicalhourmanagement.services.DoctorService;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,22 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
+@RequiredArgsConstructor
+
 public class DoctorServiceImpl implements DoctorService {
 
 
     private final DoctorRepository doctorRepository;
-
-    public DoctorServiceImpl(DoctorRepository doctorRepository){
-        this.doctorRepository = doctorRepository;
-    }
-
-    public static final ModelMapper mapper = new ModelMapper();
+    private final ModelMapper mapper ;
 
     @Override
     public List<DoctorDTO> getDoctors() {
         final List<Doctor> doctors = doctorRepository.findAll();
         return doctors.stream().map(this::convertToRest)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

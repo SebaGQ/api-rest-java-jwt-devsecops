@@ -13,6 +13,7 @@
     import com.medicalhourmanagement.medicalhourmanagement.services.DoctorService;
     import com.medicalhourmanagement.medicalhourmanagement.services.PatientService;
     import lombok.NonNull;
+    import lombok.RequiredArgsConstructor;
     import org.modelmapper.ModelMapper;
     import org.slf4j.Logger;
     import org.slf4j.LoggerFactory;
@@ -28,6 +29,8 @@
      * Los métodos no deben declarar las excepciones, ya que estas están siendo manejadas por el GlobalExceptionHandler.
      */
     @Service
+    @RequiredArgsConstructor
+
     public class AppointmentServiceImpl implements AppointmentService {
 
         private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentServiceImpl.class);
@@ -35,20 +38,13 @@
         private final DoctorService doctorService;
         private final PatientService patientService;
         private final AppointmentRepository appointmentRepository;
-
-        public AppointmentServiceImpl(DoctorService doctorService, PatientService patientService, AppointmentRepository appointmentRepository) {
-            this.doctorService = doctorService;
-            this.patientService = patientService;
-            this.appointmentRepository = appointmentRepository;
-        }
-
-        public static final ModelMapper mapper = new ModelMapper();
+        private final ModelMapper mapper;
 
         @Override
         public List<AppointmentDTO> getAppointments() {
             List<Appointment> appointments = appointmentRepository.findAll();
             return appointments.stream().map(this::convertToRest)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         /**

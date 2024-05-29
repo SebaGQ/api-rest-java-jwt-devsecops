@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class DuplicateKeyException extends RuntimeException {
 
-    private String message;
+    private final String message;
 
     public DuplicateKeyException(String message) {
         super(message);

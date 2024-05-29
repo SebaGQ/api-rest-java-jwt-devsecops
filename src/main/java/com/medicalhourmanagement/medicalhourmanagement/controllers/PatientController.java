@@ -4,6 +4,7 @@ import com.medicalhourmanagement.medicalhourmanagement.dtos.ChangePasswordReques
 import com.medicalhourmanagement.medicalhourmanagement.dtos.PatientDTO;
 import com.medicalhourmanagement.medicalhourmanagement.services.PatientService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +16,10 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "api/v1/patients")
+@RequiredArgsConstructor
 public class PatientController {
 
     private final PatientService patientService;
-
-    public PatientController(PatientService patientService){
-        this.patientService = patientService;
-    }
 
     @GetMapping
     public ResponseEntity<List<PatientDTO>> getPatients() {
@@ -61,7 +59,7 @@ public class PatientController {
 
 
     @PatchMapping
-    public ResponseEntity<?> changePassword(
+    public ResponseEntity<Void> changePassword(
             @RequestBody ChangePasswordRequestDTO request,
             Principal connectedUser
     ) {

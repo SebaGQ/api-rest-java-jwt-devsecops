@@ -3,6 +3,7 @@ package com.medicalhourmanagement.medicalhourmanagement.controllers;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.DoctorDTO;
 import com.medicalhourmanagement.medicalhourmanagement.services.DoctorService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +14,11 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "api/v1/doctors")
+@RequiredArgsConstructor
 public class DoctorController {
 
     private final DoctorService doctorService;
 
-    public DoctorController(DoctorService doctorService){
-        this.doctorService = doctorService;
-    }
 
     @GetMapping
     public ResponseEntity<List<DoctorDTO>> getDoctors() {

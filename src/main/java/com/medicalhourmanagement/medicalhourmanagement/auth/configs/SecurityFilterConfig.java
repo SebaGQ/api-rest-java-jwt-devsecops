@@ -27,6 +27,10 @@ public class SecurityFilterConfig {
     private final LogoutHandler logoutHandler;
     private final CorsConfigurationSource corsConfigurationSource;
 
+    private static final String ENDPOINT_AUTH = "api/v1/auth/**";
+    private static final String ENDPOINT_DOCTORS = "api/v1/doctors/**";
+
+    private static final String[] WHITE_LIST_URL = {ENDPOINT_AUTH};
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -36,10 +40,10 @@ public class SecurityFilterConfig {
                 .authorizeHttpRequests(req ->
                         //Importante especificar cuáles endpoints NO requieren auth, no al reves
                         req
-                                .requestMatchers("api/v1/auth/**").permitAll()
-                                .requestMatchers(GET, "/api/v1/doctors/**").permitAll()
-                                .requestMatchers( PUT, "/api/v1/doctors/**").hasRole(ADMIN.name())
-                                .requestMatchers( POST, "/api/v1/doctors/**").hasRole(ADMIN.name())
+                                .requestMatchers(WHITE_LIST_URL).permitAll()
+                                .requestMatchers(GET, ENDPOINT_DOCTORS).permitAll()
+                                .requestMatchers( PUT, ENDPOINT_DOCTORS).hasRole(ADMIN.name())
+                                .requestMatchers( POST, ENDPOINT_DOCTORS).hasRole(ADMIN.name())
 
                                 .anyRequest()
                                 .authenticated()
@@ -48,7 +52,7 @@ public class SecurityFilterConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout ->
-                        logout.logoutUrl("/api/v1/auth/logout")
+                        logout.logoutUrl(ENDPOINT_AUTH+"/logout")
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
                 )
