@@ -1,6 +1,7 @@
-package com.medicalhourmanagement.medicalhourmanagement.appointment;
+package com.medicalhourmanagement.medicalhourmanagement.repositories;
 
 
+import com.medicalhourmanagement.medicalhourmanagement.entities.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

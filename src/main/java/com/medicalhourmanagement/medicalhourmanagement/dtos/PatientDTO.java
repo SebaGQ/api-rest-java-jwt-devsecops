@@ -1,16 +1,15 @@
-package com.medicalhourmanagement.medicalhourmanagement.patient;
+package com.medicalhourmanagement.medicalhourmanagement.dtos;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.medicalhourmanagement.medicalhourmanagement.appointment.AppointmentRest;
 import lombok.Data;
 
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-public class PatientRest {
+public class PatientDTO {
 
     @JsonProperty("id")
     private Long id;
@@ -22,7 +21,7 @@ public class PatientRest {
     private String lastName;
 
     @JsonProperty("appointments")
-    private List<AppointmentRest> appointments;
+    private List<AppointmentDTO> appointments;
 
 
 }

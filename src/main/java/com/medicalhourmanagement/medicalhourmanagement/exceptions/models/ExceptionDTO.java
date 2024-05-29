@@ -6,13 +6,13 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class ErrorDto implements Serializable {
+public class ExceptionDTO implements Serializable {
 
     private String code;
 
     private String message;
 
-    public ErrorDto(String code, String message) {
+    public ExceptionDTO(String code, String message) {
         this.code = code;
         this.message = message;
     }

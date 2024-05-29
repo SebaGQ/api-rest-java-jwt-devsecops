@@ -1,10 +1,8 @@
-package com.medicalhourmanagement.medicalhourmanagement.appointment;
+package com.medicalhourmanagement.medicalhourmanagement.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.medicalhourmanagement.medicalhourmanagement.doctor.DoctorRest;
-import com.medicalhourmanagement.medicalhourmanagement.patient.PatientRest;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -15,16 +13,16 @@ import java.time.LocalDateTime;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-public class AppointmentRest {
+public class AppointmentDTO {
 
     @JsonProperty("id")
     private Long id;
 
     @JsonProperty("doctor")
-    private DoctorRest doctor;
+    private DoctorDTO doctor;
 
     @JsonProperty("patient")
-    private PatientRest patient;
+    private PatientDTO patient;
 
     @JsonProperty("date")
     private LocalDateTime date;
@@ -34,12 +32,12 @@ public class AppointmentRest {
      *  La anotación @Data de lombok genera solo los métodos getter y setter faltantes, es decir, no sobrescribe los ya definidos.
      */
     @JsonIgnoreProperties({"appointments"})
-    public DoctorRest getDoctor() {
+    public DoctorDTO getDoctor() {
         return doctor;
     }
 
     @JsonIgnoreProperties({"appointments"})
-    public PatientRest getPatient() {
+    public PatientDTO getPatient() {
         return patient;
     }
 }

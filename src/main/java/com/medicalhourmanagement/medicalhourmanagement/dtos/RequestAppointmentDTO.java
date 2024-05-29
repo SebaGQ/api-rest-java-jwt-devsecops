@@ -1,4 +1,4 @@
-package com.medicalhourmanagement.medicalhourmanagement.appointment;
+package com.medicalhourmanagement.medicalhourmanagement.dtos;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-public class RequestAppointmentRest {
+public class RequestAppointmentDTO {
     @JsonProperty("doctor")
     private Long doctor;
 

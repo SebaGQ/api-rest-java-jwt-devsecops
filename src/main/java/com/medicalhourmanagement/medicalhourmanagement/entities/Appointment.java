@@ -1,8 +1,8 @@
-package com.medicalhourmanagement.medicalhourmanagement.appointment;
+package com.medicalhourmanagement.medicalhourmanagement.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.medicalhourmanagement.medicalhourmanagement.doctor.Doctor;
-import com.medicalhourmanagement.medicalhourmanagement.patient.Patient;
+import com.medicalhourmanagement.medicalhourmanagement.entities.Doctor;
+import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;

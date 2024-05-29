@@ -1,7 +1,11 @@
-package com.medicalhourmanagement.medicalhourmanagement.doctor;
+package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
+import com.medicalhourmanagement.medicalhourmanagement.entities.Doctor;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.DoctorDTO;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.DuplicateKeyException;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.InternalServerErrorException;
+import com.medicalhourmanagement.medicalhourmanagement.repositories.DoctorRepository;
+import com.medicalhourmanagement.medicalhourmanagement.services.DoctorService;
 import lombok.NonNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -22,27 +26,27 @@ public class DoctorServiceImpl implements DoctorService {
     public static final ModelMapper mapper = new ModelMapper();
 
     @Override
-    public List<DoctorRest> getDoctors() {
+    public List<DoctorDTO> getDoctors() {
         final List<Doctor> doctors = doctorRepository.findAll();
         return doctors.stream().map(this::convertToRest)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public DoctorRest getDoctorById(@NonNull final Long doctorId) {
+    public DoctorDTO getDoctorById(@NonNull final Long doctorId) {
         final Doctor doctor = getDoctorByIdHelper(doctorId);
         return convertToRest(doctor);
     }
 
     @Override
     @Transactional
-    public DoctorRest saveDoctor(@NonNull final DoctorRest doctorRest) {
-        if (doctorRest.getId() != null) {
-            Doctor existingDoctor = getDoctorByIdHelper(doctorRest.getId());
+    public DoctorDTO saveDoctor(@NonNull final DoctorDTO doctorDTO) {
+        if (doctorDTO.getId() != null) {
+            Doctor existingDoctor = getDoctorByIdHelper(doctorDTO.getId());
             throw new DuplicateKeyException("THERE IS ALREADY A DOCTOR WITH ID: "+existingDoctor.getId());
         }
         try {
-            Doctor doctorEntity = convertToEntity(doctorRest);
+            Doctor doctorEntity = convertToEntity(doctorDTO);
             Doctor savedDoctor = doctorRepository.save(doctorEntity);
             return convertToRest(savedDoctor);
         } catch (Exception e) {
@@ -52,9 +56,9 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional
-    public DoctorRest updateDoctor(@NonNull final Long doctorId, @NonNull final DoctorRest doctorRest) {
+    public DoctorDTO updateDoctor(@NonNull final Long doctorId, @NonNull final DoctorDTO doctorDTO) {
         getDoctorByIdHelper(doctorId);
-        Doctor doctorEntity = convertToEntity(doctorRest);
+        Doctor doctorEntity = convertToEntity(doctorDTO);
         doctorEntity.setId(doctorId);
         Doctor updatedDoctor = doctorRepository.save(doctorEntity);
         return convertToRest(updatedDoctor);
@@ -72,11 +76,11 @@ public class DoctorServiceImpl implements DoctorService {
                 .orElseThrow();
     }
 
-    public DoctorRest convertToRest(Doctor doctor) {
-        return mapper.map(doctor, DoctorRest.class);
+    public DoctorDTO convertToRest(Doctor doctor) {
+        return mapper.map(doctor, DoctorDTO.class);
     }
 
-    public Doctor convertToEntity(DoctorRest doctorRest) {
-        return mapper.map(doctorRest, Doctor.class);
+    public Doctor convertToEntity(DoctorDTO doctorDTO) {
+        return mapper.map(doctorDTO, Doctor.class);
     }
 }

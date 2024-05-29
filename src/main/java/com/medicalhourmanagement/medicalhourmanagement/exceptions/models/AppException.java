@@ -10,7 +10,7 @@ public class AppException extends Exception {
 
     private final String code;
     private final int responseCode;
-    private final List<ErrorDto> errorList = new ArrayList<>();
+    private final List<ExceptionDTO> errorList = new ArrayList<>();
 
 
 }

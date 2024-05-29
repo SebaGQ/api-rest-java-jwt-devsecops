@@ -1,12 +1,17 @@
-    package com.medicalhourmanagement.medicalhourmanagement.appointment;
+    package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
-    import com.medicalhourmanagement.medicalhourmanagement.doctor.Doctor;
-    import com.medicalhourmanagement.medicalhourmanagement.doctor.DoctorService;
+    import com.medicalhourmanagement.medicalhourmanagement.dtos.RequestAppointmentDTO;
+    import com.medicalhourmanagement.medicalhourmanagement.dtos.AppointmentDTO;
+    import com.medicalhourmanagement.medicalhourmanagement.entities.Appointment;
+    import com.medicalhourmanagement.medicalhourmanagement.entities.Doctor;
     import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.InternalServerErrorException;
     import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.NotFoundException;
     import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.RequestException;
-    import com.medicalhourmanagement.medicalhourmanagement.patient.Patient;
-    import com.medicalhourmanagement.medicalhourmanagement.patient.PatientService;
+    import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
+    import com.medicalhourmanagement.medicalhourmanagement.repositories.AppointmentRepository;
+    import com.medicalhourmanagement.medicalhourmanagement.services.AppointmentService;
+    import com.medicalhourmanagement.medicalhourmanagement.services.DoctorService;
+    import com.medicalhourmanagement.medicalhourmanagement.services.PatientService;
     import lombok.NonNull;
     import org.modelmapper.ModelMapper;
     import org.slf4j.Logger;
@@ -40,7 +45,7 @@
         public static final ModelMapper mapper = new ModelMapper();
 
         @Override
-        public List<AppointmentRest> getAppointments() {
+        public List<AppointmentDTO> getAppointments() {
             List<Appointment> appointments = appointmentRepository.findAll();
             return appointments.stream().map(this::convertToRest)
                     .collect(Collectors.toList());
@@ -51,13 +56,13 @@
          * NonNull: En caso de que el valor sea null se arrojará una NullPointerException
          */
         @Override
-        public AppointmentRest getAppointmentById(@NonNull final Long id) {
+        public AppointmentDTO getAppointmentById(@NonNull final Long id) {
             return convertToRest(getAppointmentByIdHelper(id));
         }
 
         @Override
         @Transactional
-        public AppointmentRest createAppointment(@NonNull final RequestAppointmentRest createAppointmentRest) {
+        public AppointmentDTO createAppointment(@NonNull final RequestAppointmentDTO createAppointmentRest) {
             Patient patient = mapper.map(patientService.getPatientById(createAppointmentRest.getPatient()), Patient.class);
             Doctor doctor = mapper.map(doctorService.getDoctorById(createAppointmentRest.getDoctor()), Doctor.class);
 
@@ -77,13 +82,13 @@
 
         @Override
         @Transactional
-        public AppointmentRest updateAppointment(@NonNull final Long appointmentId, @NonNull final AppointmentRest appointmentRest) {
+        public AppointmentDTO updateAppointment(@NonNull final Long appointmentId, @NonNull final AppointmentDTO appointmentDTO) {
             Appointment existingAppointment = getAppointmentByIdHelper(appointmentId);
             try {
-                Doctor doctor = mapper.map(doctorService.getDoctorById(appointmentRest.getDoctor().getId()), Doctor.class);
-                Patient patient = mapper.map(patientService.getPatientById(appointmentRest.getPatient().getId()), Patient.class);
+                Doctor doctor = mapper.map(doctorService.getDoctorById(appointmentDTO.getDoctor().getId()), Doctor.class);
+                Patient patient = mapper.map(patientService.getPatientById(appointmentDTO.getPatient().getId()), Patient.class);
 
-                existingAppointment.setDate(appointmentRest.getDate());
+                existingAppointment.setDate(appointmentDTO.getDate());
                 existingAppointment.setDoctor(doctor);
                 existingAppointment.setPatient(patient);
                 Appointment updatedAppointment = appointmentRepository.save(existingAppointment);
@@ -128,8 +133,8 @@
             }
         }
 
-        public AppointmentRest convertToRest(Appointment appointment) {
-            return mapper.map(appointment, AppointmentRest.class);
+        public AppointmentDTO convertToRest(Appointment appointment) {
+            return mapper.map(appointment, AppointmentDTO.class);
         }
 
     }
