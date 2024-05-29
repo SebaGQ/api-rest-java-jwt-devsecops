@@ -1,25 +1,29 @@
 package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
 import com.medicalhourmanagement.medicalhourmanagement.dtos.ChangePasswordRequestDTO;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.PatientDTO;
 import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.DuplicateKeyException;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.NotFoundException;
-import com.medicalhourmanagement.medicalhourmanagement.dtos.PatientDTO;
+import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.UnauthorizedAppointmentException;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.PatientRepository;
 import com.medicalhourmanagement.medicalhourmanagement.services.PatientService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
@@ -27,22 +31,26 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
     private final PasswordEncoder passwordEncoder;
-    public final ModelMapper mapper;
+    private final ModelMapper mapper;
 
     @Override
-    public List<PatientDTO> getPatients(){
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    public List<PatientDTO> getPatients() {
         List<Patient> patients = patientRepository.findAll();
         return patients.stream().map(this::convertToRest).toList();
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public PatientDTO getPatientById(@NonNull final Long patientId) {
         Patient patient = getPatientByIdHelper(patientId);
+        validateUserAuthorization(patient.getEmail());
         return convertToRest(patient);
     }
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public PatientDTO savePatient(@NonNull final PatientDTO patientDTO) {
         if (patientDTO.getId() != null) {
             Patient existingPatient = getPatientByIdHelper(patientDTO.getId());
@@ -55,7 +63,8 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public PatientDTO updatePatient(@NonNull final Long patientId, PatientDTO patientDTO){
+    @PreAuthorize("hasRole('ADMIN')")
+    public PatientDTO updatePatient(@NonNull final Long patientId, @NonNull final PatientDTO patientDTO) {
         Patient existingPatient = getPatientByIdHelper(patientId);
         existingPatient.setFirstName(patientDTO.getFirstName());
         existingPatient.setLastName(patientDTO.getLastName());
@@ -65,20 +74,36 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public void deletePatientById(@NonNull final Long patientId)  {
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deletePatientById(@NonNull final Long patientId) {
         getPatientByIdHelper(patientId);
         patientRepository.deleteById(patientId);
     }
 
-    public Patient getPatientByIdHelper(@NonNull final Long patientId) {
+    private Patient getPatientByIdHelper(@NonNull final Long patientId) {
         return patientRepository.findById(patientId)
                 .orElseThrow(() -> new NotFoundException("PATIENT ID: " + patientId + " NOT FOUND"));
     }
 
-    public PatientDTO convertToRest(Patient patient) {
+    private void validateUserAuthorization(String patientEmail) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        boolean isAdminOrManager = authorities.stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN") ||
+                        grantedAuthority.getAuthority().equals("ROLE_MANAGER"));
+
+        if (!isAdminOrManager && !patientEmail.equals(email)) {
+            throw new UnauthorizedAppointmentException("You are not authorized to access this patient's information");
+        }
+    }
+
+    private PatientDTO convertToRest(Patient patient) {
         return mapper.map(patient, PatientDTO.class);
     }
-    public Patient convertToEntity(PatientDTO patientDTO) {
+
+    private Patient convertToEntity(PatientDTO patientDTO) {
         return mapper.map(patientDTO, Patient.class);
     }
 
@@ -87,28 +112,17 @@ public class PatientServiceImpl implements PatientService {
 
         var user = (Patient) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
-        // check if the current password is correct
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new IllegalStateException("Wrong password");
         }
-        // check if the two new passwords are the same
+
         if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
             throw new IllegalStateException("Password are not the same");
         }
 
-        // update the password
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
-        // save the new password
         patientRepository.save(user);
     }
 
-    // Método para buscar un usuario por correo electrónico
-    public Optional<Patient> findByEmail(String email) {
-        return patientRepository.findByEmail(email);
-    }
-
-    public Optional<Patient> findById(Long id) {
-        return patientRepository.findById(id);
-    }
 }

@@ -4,6 +4,7 @@ import com.medicalhourmanagement.medicalhourmanagement.dtos.AppointmentDTO;
 import com.medicalhourmanagement.medicalhourmanagement.services.AppointmentService;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.RequestAppointmentDTO;
 import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +22,6 @@ public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
-
     @GetMapping
     public ResponseEntity<List<AppointmentDTO>> getAppointments() {
         List<AppointmentDTO> appointments = appointmentService.getAppointments();
@@ -30,33 +30,30 @@ public class AppointmentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AppointmentDTO> getAppointmentById(@PathVariable Long id){
+    public ResponseEntity<AppointmentDTO> getAppointmentById(@NonNull @PathVariable final Long id){
         AppointmentDTO appointment = appointmentService.getAppointmentById(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(appointment);
     }
 
     @PostMapping
-    public ResponseEntity<AppointmentDTO> createAppointment(@Valid @RequestBody RequestAppointmentDTO requestAppointmentDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        AppointmentDTO createdAppointment = appointmentService.createAppointment(requestAppointmentDTO,email);
+    public ResponseEntity<AppointmentDTO> createAppointment(@NonNull @Valid @RequestBody final RequestAppointmentDTO requestAppointmentDTO){
+        AppointmentDTO createdAppointment = appointmentService.createAppointment(requestAppointmentDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(createdAppointment);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AppointmentDTO> updateAppointment(@PathVariable Long id, @Valid @RequestBody AppointmentDTO appointmentRequest){
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<AppointmentDTO> updateAppointment(@NonNull @PathVariable final Long id, @NonNull @Valid @RequestBody final AppointmentDTO appointmentRequest){
         AppointmentDTO updatedAppointment = appointmentService.updateAppointment(id, appointmentRequest);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(updatedAppointment);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteAppointment(@PathVariable Long id){
+    public ResponseEntity<Void> deleteAppointment(@NonNull @PathVariable final Long id){
         appointmentService.deleteAppointmentById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .build();
     }
-
 }

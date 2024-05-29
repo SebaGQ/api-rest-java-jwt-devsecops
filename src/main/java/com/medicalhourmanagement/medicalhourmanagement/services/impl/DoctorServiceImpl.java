@@ -1,47 +1,48 @@
 package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
-import com.medicalhourmanagement.medicalhourmanagement.entities.Doctor;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.DoctorDTO;
+import com.medicalhourmanagement.medicalhourmanagement.entities.Doctor;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.DuplicateKeyException;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.InternalServerErrorException;
+import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.NotFoundException;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.DoctorRepository;
 import com.medicalhourmanagement.medicalhourmanagement.services.DoctorService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
-
 public class DoctorServiceImpl implements DoctorService {
 
-
     private final DoctorRepository doctorRepository;
-    private final ModelMapper mapper ;
+    private final ModelMapper mapper;
 
     @Override
     public List<DoctorDTO> getDoctors() {
-        final List<Doctor> doctors = doctorRepository.findAll();
-        return doctors.stream().map(this::convertToRest)
-                .toList();
+        List<Doctor> doctors = doctorRepository.findAll();
+        return doctors.stream().map(this::convertToRest).toList();
     }
 
     @Override
     public DoctorDTO getDoctorById(@NonNull final Long doctorId) {
-        final Doctor doctor = getDoctorByIdHelper(doctorId);
+        Doctor doctor = getDoctorByIdHelper(doctorId);
         return convertToRest(doctor);
     }
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public DoctorDTO saveDoctor(@NonNull final DoctorDTO doctorDTO) {
         if (doctorDTO.getId() != null) {
             Doctor existingDoctor = getDoctorByIdHelper(doctorDTO.getId());
-            throw new DuplicateKeyException("THERE IS ALREADY A DOCTOR WITH ID: "+existingDoctor.getId());
+            throw new DuplicateKeyException("THERE IS ALREADY A DOCTOR WITH ID: " + existingDoctor.getId());
         }
         try {
             Doctor doctorEntity = convertToEntity(doctorDTO);
@@ -54,6 +55,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public DoctorDTO updateDoctor(@NonNull final Long doctorId, @NonNull final DoctorDTO doctorDTO) {
         getDoctorByIdHelper(doctorId);
         Doctor doctorEntity = convertToEntity(doctorDTO);
@@ -64,6 +66,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteDoctorById(@NonNull final Long doctorId) {
         getDoctorByIdHelper(doctorId);
         doctorRepository.deleteById(doctorId);
@@ -71,14 +74,14 @@ public class DoctorServiceImpl implements DoctorService {
 
     private Doctor getDoctorByIdHelper(@NonNull Long doctorId) {
         return doctorRepository.findById(doctorId)
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("DOCTOR NOT FOUND"));
     }
 
-    public DoctorDTO convertToRest(Doctor doctor) {
+    private DoctorDTO convertToRest(Doctor doctor) {
         return mapper.map(doctor, DoctorDTO.class);
     }
 
-    public Doctor convertToEntity(DoctorDTO doctorDTO) {
+    private Doctor convertToEntity(DoctorDTO doctorDTO) {
         return mapper.map(doctorDTO, Doctor.class);
     }
 }

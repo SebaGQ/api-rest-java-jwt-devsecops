@@ -24,5 +24,5 @@ public interface AppointmentService {
     void deleteAppointmentById(@NonNull Long id);
 
     @Transactional  //Recibe un DTO de request
-    AppointmentDTO createAppointment(@NonNull RequestAppointmentDTO createAppointmentRest, String email);
+    AppointmentDTO createAppointment(@NonNull RequestAppointmentDTO createAppointmentRest);
 }
