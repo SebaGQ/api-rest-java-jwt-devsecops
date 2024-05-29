@@ -24,7 +24,7 @@ public class PatientController {
                 patientService.getPatients());
     }
 
-    @GetMapping(value = "/{patientId}")
+    @GetMapping(value = "/{id}")
     public PatientResponse<PatientRest> getPatientById(@PathVariable Long id) {
         return new PatientResponse<>("SUCCESS", String.valueOf(HttpStatus.OK), "PATIENT ID: "+id+" SUCCESSFULLY READED",
                 patientService.getPatientById(id));
