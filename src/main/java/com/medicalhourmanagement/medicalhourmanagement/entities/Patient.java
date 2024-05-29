@@ -43,7 +43,7 @@ public class Patient implements UserDetails {
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "patient")
   @JsonManagedReference("patient-appointments")
-  private List<Appointment> appointments;
+  private transient List<Appointment> appointments;
 
 
   @Enumerated(EnumType.STRING)

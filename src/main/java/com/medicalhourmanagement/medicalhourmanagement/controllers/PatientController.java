@@ -14,7 +14,6 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping(path = "api/v1/patients")
 @RequiredArgsConstructor
 public class PatientController {
@@ -55,8 +54,6 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .build();
     }
-
-
 
     @PatchMapping
     public ResponseEntity<Void> changePassword(

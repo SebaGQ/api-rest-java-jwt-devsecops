@@ -19,15 +19,15 @@ public class Token {
   @GeneratedValue
   public Long id;
 
-  @Column(unique = true)
-  public String token;
+  @Column(unique = true, name = "access_token")
+  public String accessToken;
 
   @Enumerated(EnumType.STRING)
   public TokenType tokenType = TokenType.BEARER;
 
-  public boolean revoked;
+  private boolean revoked;
 
-  public boolean expired;
+  private boolean expired;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "patient_id")

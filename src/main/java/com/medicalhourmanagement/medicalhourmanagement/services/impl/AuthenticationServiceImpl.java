@@ -103,7 +103,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private void saveUserToken(Patient patient, String jwtToken) {
     var token = Token.builder()
             .patient(patient)
-            .token(jwtToken)
+            .accessToken(jwtToken)
             .tokenType(TokenType.BEARER)
             .expired(false)
             .revoked(false)

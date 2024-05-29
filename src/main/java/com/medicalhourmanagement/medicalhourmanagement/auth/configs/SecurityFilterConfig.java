@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,9 +37,9 @@ public class SecurityFilterConfig {
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .csrf(csrf -> csrf.disable())
+                .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(req ->
-                        //Importante especificar cuáles endpoints NO requieren auth, no al reves
+                        //Importante empezar especificando cuáles endpoints NO requieren auth, y terminar con un  .anyRequest().authenticated()
                         req
                                 .requestMatchers(WHITE_LIST_URL).permitAll()
                                 .requestMatchers(GET, ENDPOINT_DOCTORS).permitAll()
