@@ -1,4 +1,4 @@
-package com.medicalhourmanagement.medicalhourmanagement.exceptions.models;
+package com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos;
 
 
 import lombok.Data;

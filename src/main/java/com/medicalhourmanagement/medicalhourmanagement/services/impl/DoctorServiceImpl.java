@@ -2,8 +2,8 @@ package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
 import com.medicalhourmanagement.medicalhourmanagement.entities.Doctor;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.DoctorDTO;
-import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.DuplicateKeyException;
-import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.InternalServerErrorException;
+import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.DuplicateKeyException;
+import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.InternalServerErrorException;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.DoctorRepository;
 import com.medicalhourmanagement.medicalhourmanagement.services.DoctorService;
 import lombok.NonNull;

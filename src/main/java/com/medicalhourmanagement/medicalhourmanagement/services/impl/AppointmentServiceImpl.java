@@ -4,9 +4,9 @@
     import com.medicalhourmanagement.medicalhourmanagement.dtos.AppointmentDTO;
     import com.medicalhourmanagement.medicalhourmanagement.entities.Appointment;
     import com.medicalhourmanagement.medicalhourmanagement.entities.Doctor;
-    import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.InternalServerErrorException;
-    import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.NotFoundException;
-    import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.RequestException;
+    import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.InternalServerErrorException;
+    import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.NotFoundException;
+    import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.RequestException;
     import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
     import com.medicalhourmanagement.medicalhourmanagement.repositories.AppointmentRepository;
     import com.medicalhourmanagement.medicalhourmanagement.services.AppointmentService;

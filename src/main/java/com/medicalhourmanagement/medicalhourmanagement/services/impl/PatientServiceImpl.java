@@ -1,7 +1,7 @@
 package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
-import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.DuplicateKeyException;
-import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.NotFoundException;
+import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.DuplicateKeyException;
+import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.NotFoundException;
 import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.PatientDTO;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.PatientRepository;

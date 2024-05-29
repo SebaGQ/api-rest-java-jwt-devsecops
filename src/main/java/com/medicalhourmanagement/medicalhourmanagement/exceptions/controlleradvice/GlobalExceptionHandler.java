@@ -1,12 +1,13 @@
 package com.medicalhourmanagement.medicalhourmanagement.exceptions.controlleradvice;
 
-import com.medicalhourmanagement.medicalhourmanagement.exceptions.models.*;
+import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
 /**
  * Manejador Global de Excepciones
@@ -15,65 +16,123 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AppException.class)
-    public ResponseEntity<Object> handleAppException(AppException ex) {
+    public ResponseEntity<ExceptionDTO> handleAppException(AppException ex, WebRequest request) {
         HttpStatus status = HttpStatus.valueOf(ex.getResponseCode());
-        ExceptionDTO error = new ExceptionDTO("P-501", ex.getMessage());
+        ExceptionDTO error = new ExceptionDTO();
+        error.setStatus(status.value());
+        error.setError(status.getReasonPhrase());
+        error.setMessage(ex.getMessage());
+        error.setPath(request.getDescription(false).substring(4)); // Remover "uri="
+
         return new ResponseEntity<>(error, status);
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
+    public ResponseEntity<ExceptionDTO> handleNotFoundException(NotFoundException ex, WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
-        ExceptionDTO error = new ExceptionDTO("P-404", ex.getMessage());
+        ExceptionDTO error = new ExceptionDTO();
+        error.setStatus(status.value());
+        error.setError(status.getReasonPhrase());
+        error.setMessage(ex.getMessage());
+        error.setPath(request.getDescription(false).substring(4));
+
         return new ResponseEntity<>(error, status);
     }
 
     @ExceptionHandler(RequestException.class)
-    public ResponseEntity<Object> handleRequestException(RequestException ex) {
+    public ResponseEntity<ExceptionDTO> handleRequestException(RequestException ex, WebRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        ExceptionDTO error = new ExceptionDTO("P-400", ex.getMessage());
+        ExceptionDTO error = new ExceptionDTO();
+        error.setStatus(status.value());
+        error.setError(status.getReasonPhrase());
+        error.setMessage(ex.getMessage());
+        error.setPath(request.getDescription(false).substring(4));
+
         return new ResponseEntity<>(error, status);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ExceptionDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        ExceptionDTO error = new ExceptionDTO("P-400", ex.getMessage());
+        ExceptionDTO error = new ExceptionDTO();
+        error.setStatus(status.value());
+        error.setError(status.getReasonPhrase());
+        error.setMessage(ex.getMessage());
+        error.setPath(request.getDescription(false).substring(4));
+
         return new ResponseEntity<>(error, status);
     }
+
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<Object> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
+    public ResponseEntity<ExceptionDTO> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex, WebRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        ExceptionDTO error = new ExceptionDTO("P-400", ex.getMessage());
+        ExceptionDTO error = new ExceptionDTO();
+        error.setStatus(status.value());
+        error.setError(status.getReasonPhrase());
+        error.setMessage(ex.getMessage());
+        error.setPath(request.getDescription(false).substring(4));
+
         return new ResponseEntity<>(error, status);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Object> handleRuntimeException(RuntimeException ex) {
+    public ResponseEntity<ExceptionDTO> handleRuntimeException(RuntimeException ex, WebRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        ExceptionDTO error = new ExceptionDTO("P-666", ex.getMessage());
+        ExceptionDTO error = new ExceptionDTO();
+        error.setStatus(status.value());
+        error.setError(status.getReasonPhrase());
+        error.setMessage(ex.getMessage());
+        error.setPath(request.getDescription(false).substring(4));
+
         return new ResponseEntity<>(error, status);
     }
 
     @ExceptionHandler(InternalServerErrorException.class)
-    public ResponseEntity<Object> handleInternalServerErrorException(InternalServerErrorException ex) {
+    public ResponseEntity<ExceptionDTO> handleInternalServerErrorException(InternalServerErrorException ex, WebRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        ExceptionDTO error = new ExceptionDTO("P-500", ex.getMessage());
+        ExceptionDTO error = new ExceptionDTO();
+        error.setStatus(status.value());
+        error.setError(status.getReasonPhrase());
+        error.setMessage(ex.getMessage());
+        error.setPath(request.getDescription(false).substring(4));
+
         return new ResponseEntity<>(error, status);
     }
 
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<Object> handleNullPointerException(NullPointerException ex) {
+    public ResponseEntity<ExceptionDTO> handleNullPointerException(NullPointerException ex, WebRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        ExceptionDTO error = new ExceptionDTO("P-500", ex.getMessage());
+        ExceptionDTO error = new ExceptionDTO();
+        error.setStatus(status.value());
+        error.setError(status.getReasonPhrase());
+        error.setMessage(ex.getMessage());
+        error.setPath(request.getDescription(false).substring(4));
+
         return new ResponseEntity<>(error, status);
     }
 
     @ExceptionHandler(DuplicateKeyException.class)
-    public ResponseEntity<Object> handleDuplicateKeyException(DuplicateKeyException ex) {
+    public ResponseEntity<ExceptionDTO> handleDuplicateKeyException(DuplicateKeyException ex, WebRequest request) {
         HttpStatus status = HttpStatus.CONFLICT;
-        ExceptionDTO error = new ExceptionDTO("P-409", ex.getMessage());
+        ExceptionDTO error = new ExceptionDTO();
+        error.setStatus(status.value());
+        error.setError(status.getReasonPhrase());
+        error.setMessage(ex.getMessage());
+        error.setPath(request.getDescription(false).substring(4));
+
         return new ResponseEntity<>(error, status);
     }
 
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionDTO> handleGenericException(Exception ex, WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        ExceptionDTO error = new ExceptionDTO();
+        error.setStatus(status.value());
+        error.setError(status.getReasonPhrase());
+        error.setMessage(ex.getMessage());
+        error.setPath(request.getDescription(false).substring(4));
+
+        return new ResponseEntity<>(error, status);
+    }
 }
