@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "api/doctors")
+@RequestMapping(path = "api/v1/doctors")
 public class DoctorController {
 
     private final DoctorService doctorService;

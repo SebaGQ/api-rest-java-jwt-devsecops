@@ -4,10 +4,10 @@
     import com.medicalhourmanagement.medicalhourmanagement.dtos.AppointmentDTO;
     import com.medicalhourmanagement.medicalhourmanagement.entities.Appointment;
     import com.medicalhourmanagement.medicalhourmanagement.entities.Doctor;
+    import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
     import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.InternalServerErrorException;
     import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.NotFoundException;
     import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.RequestException;
-    import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
     import com.medicalhourmanagement.medicalhourmanagement.repositories.AppointmentRepository;
     import com.medicalhourmanagement.medicalhourmanagement.services.AppointmentService;
     import com.medicalhourmanagement.medicalhourmanagement.services.DoctorService;
@@ -62,9 +62,12 @@
 
         @Override
         @Transactional
-        public AppointmentDTO createAppointment(@NonNull final RequestAppointmentDTO createAppointmentRest) {
+        public AppointmentDTO createAppointment(@NonNull final RequestAppointmentDTO createAppointmentRest, String email ) {
             Patient patient = mapper.map(patientService.getPatientById(createAppointmentRest.getPatient()), Patient.class);
             Doctor doctor = mapper.map(doctorService.getDoctorById(createAppointmentRest.getDoctor()), Doctor.class);
+
+            if (patient.getEmail() != email){}
+
 
             validateTime(createAppointmentRest.getDate(), doctor.getId(),patient.getId());
 

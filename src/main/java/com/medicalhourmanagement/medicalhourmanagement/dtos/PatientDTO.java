@@ -20,8 +20,23 @@ public class PatientDTO {
     @JsonProperty("last_name")
     private String lastName;
 
+    @JsonProperty("email")
+    private String email;
+
+    @JsonProperty("rut")
+    private String rut;
+
+    @JsonProperty("phone_number")
+    private String phoneNumber;
+
+    @JsonProperty("address")
+    private String address;
+
     @JsonProperty("appointments")
     private List<AppointmentDTO> appointments;
+
+    @JsonProperty("role")
+    private String role;
 
 
 }

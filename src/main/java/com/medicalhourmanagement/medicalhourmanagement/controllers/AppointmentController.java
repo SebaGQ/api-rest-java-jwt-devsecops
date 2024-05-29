@@ -7,13 +7,15 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/appointments")
+@RequestMapping("/api/v1/appointments")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
@@ -36,9 +38,11 @@ public class AppointmentController {
                 .body(appointment);
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<AppointmentDTO> createAppointment(@Valid @RequestBody RequestAppointmentDTO requestAppointmentDTO){
-        AppointmentDTO createdAppointment = appointmentService.createAppointment(requestAppointmentDTO);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        AppointmentDTO createdAppointment = appointmentService.createAppointment(requestAppointmentDTO,email);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(createdAppointment);
     }

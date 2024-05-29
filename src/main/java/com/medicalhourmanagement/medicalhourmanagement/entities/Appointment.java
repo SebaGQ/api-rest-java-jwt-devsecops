@@ -1,8 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.medicalhourmanagement.medicalhourmanagement.entities.Doctor;
-import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
@@ -35,7 +33,7 @@ public class Appointment {
      */
     @Future(message = "DATE MUST BE FUTURE")
     @NotNull(message = "DATE CANNOT BE NULL")
-    @Column(name = "DATE")
+    @Column(name = "date")
     private LocalDateTime date;
 
     /**

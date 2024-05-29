@@ -1,5 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.controllers;
 
+import com.medicalhourmanagement.medicalhourmanagement.dtos.ChangePasswordRequestDTO;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.PatientDTO;
 import com.medicalhourmanagement.medicalhourmanagement.services.PatientService;
 import jakarta.validation.Valid;
@@ -8,11 +9,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "api/patients")
+@RequestMapping(path = "api/v1/patients")
 public class PatientController {
 
     private final PatientService patientService;
@@ -56,4 +58,14 @@ public class PatientController {
                 .build();
     }
 
+
+
+    @PatchMapping
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordRequestDTO request,
+            Principal connectedUser
+    ) {
+        patientService.changePassword(request, connectedUser);
+        return ResponseEntity.ok().build();
+    }
 }

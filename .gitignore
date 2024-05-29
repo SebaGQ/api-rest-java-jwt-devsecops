@@ -13,9 +13,9 @@ idea.log
 
 # Visual Studio
 .vs/
-*.csproj.user
+*.csproj.patient
 *.suo
-*.user
+*.patient
 *.userosscache
 *.sln.docstates
 

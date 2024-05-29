@@ -1,17 +1,22 @@
 package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
+import com.medicalhourmanagement.medicalhourmanagement.dtos.ChangePasswordRequestDTO;
+import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.DuplicateKeyException;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.NotFoundException;
-import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.PatientDTO;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.PatientRepository;
 import com.medicalhourmanagement.medicalhourmanagement.services.PatientService;
 import lombok.NonNull;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -20,8 +25,12 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
 
-    public PatientServiceImpl(PatientRepository patientRepository) {
+
+    private final PasswordEncoder passwordEncoder;
+
+    public PatientServiceImpl(PatientRepository patientRepository, PasswordEncoder passwordEncoder, PatientRepository repository) {
         this.patientRepository = patientRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public static final ModelMapper mapper = new ModelMapper();
@@ -53,7 +62,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public PatientDTO updatePatient(@NonNull final Long patientId, @NonNull final PatientDTO patientDTO){
+    public PatientDTO updatePatient(@NonNull final Long patientId, PatientDTO patientDTO){
         Patient existingPatient = getPatientByIdHelper(patientId);
         existingPatient.setFirstName(patientDTO.getFirstName());
         existingPatient.setLastName(patientDTO.getLastName());
@@ -78,5 +87,35 @@ public class PatientServiceImpl implements PatientService {
     }
     public Patient convertToEntity(PatientDTO patientDTO) {
         return mapper.map(patientDTO, Patient.class);
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequestDTO request, Principal connectedUser) {
+
+        var user = (Patient) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        // check if the current password is correct
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalStateException("Wrong password");
+        }
+        // check if the two new passwords are the same
+        if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
+            throw new IllegalStateException("Password are not the same");
+        }
+
+        // update the password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        // save the new password
+        patientRepository.save(user);
+    }
+
+    // Método para buscar un usuario por correo electrónico
+    public Optional<Patient> findByEmail(String email) {
+        return patientRepository.findByEmail(email);
+    }
+
+    public Optional<Patient> findById(Long id) {
+        return patientRepository.findById(id);
     }
 }
