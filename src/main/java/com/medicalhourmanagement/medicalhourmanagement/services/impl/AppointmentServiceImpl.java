@@ -84,7 +84,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         validateUserAuthorization(email, isAdminOrModerator, patient);
 
-        updateExistingAppointment(existingAppointment, appointmentRequest, doctor, patient);
+        updateExistingAppointment(existingAppointment, appointmentRequest);
 
         validateAppointmentTime(appointmentRequest.getDate(), doctor.getId(), patient.getId());
 
@@ -149,7 +149,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
-    private void updateExistingAppointment(Appointment existingAppointment, AppointmentDTO appointmentRequest, Doctor doctor, Patient patient) {
+    private void updateExistingAppointment(Appointment existingAppointment, AppointmentDTO appointmentRequest) {
         existingAppointment.setDate(appointmentRequest.getDate());
         existingAppointment.setDoctor(mapper.map(appointmentRequest.getDoctor(), Doctor.class));
         existingAppointment.setPatient(mapper.map(appointmentRequest.getPatient(), Patient.class));

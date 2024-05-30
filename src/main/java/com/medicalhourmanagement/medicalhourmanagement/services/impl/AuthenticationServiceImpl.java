@@ -27,6 +27,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
+  private static final String BEARER_PREFIX = "Bearer ";
+
   private final PatientRepository repository;
   private final TokenRepository tokenRepository;
   private final PasswordEncoder passwordEncoder;
@@ -35,73 +37,91 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   @Override
   public AuthenticationResponseDTO register(RegisterRequestDTO request) {
-    var user = Patient.builder()
+    Patient user = buildPatientFromRequest(request);
+    Patient savedUser = repository.save(user);
+    String jwtToken = jwtService.generateToken(user);
+    String refreshToken = jwtService.generateRefreshToken(user);
+    saveUserToken(savedUser, jwtToken);
+    return buildAuthResponse(jwtToken, refreshToken);
+  }
+
+  @Override
+  public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
+    Patient user = repository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new BadCredentialsException("User not found"));
+
+    authenticateUser(request.getEmail(), request.getPassword());
+
+    String jwtToken = jwtService.generateToken(user);
+    String refreshToken = jwtService.generateRefreshToken(user);
+    revokeAllUserTokens(user);
+    saveUserToken(user, jwtToken);
+    return buildAuthResponse(jwtToken, refreshToken);
+  }
+
+  @Override
+  public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+    if (isInvalidAuthHeader(authHeader)) {
+      return;
+    }
+
+    String refreshToken = extractToken(authHeader);
+    String userEmail = jwtService.extractUsername(refreshToken);
+
+    if (userEmail != null) {
+      processRefreshToken(response, refreshToken, userEmail);
+    }
+  }
+
+  private boolean isInvalidAuthHeader(String authHeader) {
+    return authHeader == null || !authHeader.startsWith(BEARER_PREFIX);
+  }
+
+  private String extractToken(String authHeader) {
+    return authHeader.substring(BEARER_PREFIX.length());
+  }
+
+  private void processRefreshToken(HttpServletResponse response, String refreshToken, String userEmail) throws IOException {
+    Patient user = repository.findByEmail(userEmail).orElseThrow();
+    if (jwtService.isTokenValid(refreshToken, user)) {
+      String accessToken = jwtService.generateToken(user);
+      revokeAllUserTokens(user);
+      saveUserToken(user, accessToken);
+      writeAuthResponse(response, buildAuthResponse(accessToken, refreshToken));
+    }
+  }
+
+  private void writeAuthResponse(HttpServletResponse response, AuthenticationResponseDTO authResponse) throws IOException {
+    response.setContentType("application/json");
+    new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+  }
+
+  private Patient buildPatientFromRequest(RegisterRequestDTO request) {
+    return Patient.builder()
             .firstName(request.getFirstname())
             .lastName(request.getLastname())
             .email(request.getEmail())
             .password(passwordEncoder.encode(request.getPassword()))
             .role(Role.USER)
             .build();
-    var savedUser = repository.save(user);
-    var jwtToken = jwtService.generateToken(user);
-    var refreshToken = jwtService.generateRefreshToken(user);
-    saveUserToken(savedUser, jwtToken);
-    return AuthenticationResponseDTO.builder()
-            .accessToken(jwtToken)
-            .refreshToken(refreshToken)
-            .build();
   }
 
-  @Override
-  public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
-    var user = repository.findByEmail(request.getEmail())
-            .orElseThrow(() -> new BadCredentialsException("User not found"));
-
+  private void authenticateUser(String email, String password) {
     authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                    request.getEmail(),
-                    request.getPassword()
-            )
+            new UsernamePasswordAuthenticationToken(email, password)
     );
+  }
 
-    var jwtToken = jwtService.generateToken(user);
-    var refreshToken = jwtService.generateRefreshToken(user);
-    revokeAllUserTokens(user);
-    saveUserToken(user, jwtToken);
+  private AuthenticationResponseDTO buildAuthResponse(String jwtToken, String refreshToken) {
     return AuthenticationResponseDTO.builder()
             .accessToken(jwtToken)
             .refreshToken(refreshToken)
             .build();
-  }
-
-  @Override
-  public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-    final String refreshToken;
-    final String userEmail;
-    if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-      return;
-    }
-    refreshToken = authHeader.substring(7);
-    userEmail = jwtService.extractUsername(refreshToken);
-    if (userEmail != null) {
-      var user = this.repository.findByEmail(userEmail)
-              .orElseThrow();
-      if (jwtService.isTokenValid(refreshToken, user)) {
-        var accessToken = jwtService.generateToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, accessToken);
-        var authResponse = AuthenticationResponseDTO.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-        new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-      }
-    }
   }
 
   private void saveUserToken(Patient patient, String jwtToken) {
-    var token = Token.builder()
+    Token token = Token.builder()
             .patient(patient)
             .accessToken(jwtToken)
             .tokenType(TokenType.BEARER)
@@ -113,8 +133,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   private void revokeAllUserTokens(Patient patient) {
     var validUserTokens = tokenRepository.findAllValidTokenByUser(patient.getId());
-    if (validUserTokens.isEmpty())
+    if (validUserTokens.isEmpty()) {
       return;
+    }
     validUserTokens.forEach(token -> {
       token.setExpired(true);
       token.setRevoked(true);

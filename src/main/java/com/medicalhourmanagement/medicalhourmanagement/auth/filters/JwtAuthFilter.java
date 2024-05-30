@@ -1,6 +1,5 @@
 package com.medicalhourmanagement.medicalhourmanagement.auth.filters;
 
-
 import com.medicalhourmanagement.medicalhourmanagement.auth.services.JwtService;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.ExpiredTokenException;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.InvalidTokenException;
@@ -25,6 +24,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
+  private static final String AUTHORIZATION_HEADER = "Authorization";
+  private static final String BEARER_PREFIX = "Bearer ";
+  private static final String ENDPOINT_AUTH = "/api/v1/auth";
+
   private final JwtService jwtService;
   private final UserDetailsService userDetailsService;
   private final TokenRepository tokenRepository;
@@ -35,18 +38,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
           @NonNull HttpServletResponse response,
           @NonNull FilterChain filterChain
   ) throws ServletException, IOException {
-    if (request.getServletPath().contains("/api/v1/auth")) {
+    if (isAuthPath(request)) {
       filterChain.doFilter(request, response);
       return;
     }
-    final String authHeader = request.getHeader("Authorization");
-    final String jwt;
+
+    final String authHeader = request.getHeader(AUTHORIZATION_HEADER);
+    if (isInvalidAuthHeader(authHeader)) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
+    final String jwt = extractJwtFromHeader(authHeader);
     final String userEmail;
-    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      filterChain.doFilter(request, response);
-      return;
-    }
-    jwt = authHeader.substring(7);
+
     try {
       userEmail = jwtService.extractUsername(jwt);
     } catch (ExpiredTokenException e) {
@@ -56,24 +61,43 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       handleException(response, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-      UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-      var isTokenValid = tokenRepository.findByAccessToken(jwt)
-              .map(t -> !t.isExpired() && !t.isRevoked())
-              .orElse(false);
-      if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.getAuthorities()
-        );
-        authToken.setDetails(
-                new WebAuthenticationDetailsSource().buildDetails(request)
-        );
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-      }
+
+    if (userEmail != null && isNotAuthenticated()) {
+      processTokenAuthentication(request, jwt, userEmail);
     }
+
     filterChain.doFilter(request, response);
+  }
+
+  private boolean isAuthPath(HttpServletRequest request) {
+    return request.getServletPath().contains(ENDPOINT_AUTH);
+  }
+
+  private boolean isInvalidAuthHeader(String authHeader) {
+    return authHeader == null || !authHeader.startsWith(BEARER_PREFIX);
+  }
+
+  private String extractJwtFromHeader(String authHeader) {
+    return authHeader.substring(BEARER_PREFIX.length());
+  }
+
+  private boolean isNotAuthenticated() {
+    return SecurityContextHolder.getContext().getAuthentication() == null;
+  }
+
+  private void processTokenAuthentication(HttpServletRequest request, String jwt, String userEmail) {
+    UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+    boolean isTokenValid = tokenRepository.findByAccessToken(jwt)
+            .map(t -> !t.isExpired() && !t.isRevoked())
+            .orElse(false);
+
+    if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
+      UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+              userDetails, null, userDetails.getAuthorities()
+      );
+      authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+      SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
   }
 
   private void handleException(HttpServletResponse response, String message, int status) throws IOException {
