@@ -1,6 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.auth.services;
 
-
+import com.medicalhourmanagement.medicalhourmanagement.constants.AuthConstants;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.ExpiredTokenException;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.InvalidTokenException;
 import io.jsonwebtoken.Claims;
@@ -9,6 +9,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import com.medicalhourmanagement.medicalhourmanagement.constants.ExceptionMessageConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +25,8 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(JwtService.class);
 
   @Value("${application.security.jwt.secret-key}")
   private String secretKey;
@@ -41,23 +46,25 @@ public class JwtService {
 
   public String generateToken(UserDetails userDetails) {
     Map<String, Object> claims = new HashMap<>();
-    //claims.put("email", userDetails.getUsername()); // Ya estaba como 'sub'
-    claims.put("role", userDetails.getAuthorities().stream()
+    claims.put(AuthConstants.ROLE_CLAIM, userDetails.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
-            .findFirst().orElseThrow(() -> new RuntimeException("No roles found")));
+            .findFirst().orElseThrow(() -> {
+              LOGGER.error(ExceptionMessageConstants.ROLE_NOT_FOUND_MSG);
+              return new RuntimeException(ExceptionMessageConstants.ROLE_NOT_FOUND_MSG);
+            }));
 
     return generateToken(claims, userDetails);
   }
 
   public String generateToken(
-      Map<String, Object> extraClaims,
-      UserDetails userDetails
+          Map<String, Object> extraClaims,
+          UserDetails userDetails
   ) {
     return buildToken(extraClaims, userDetails, jwtExpiration);
   }
 
   public String generateRefreshToken(
-      UserDetails userDetails
+          UserDetails userDetails
   ) {
     return buildToken(new HashMap<>(), userDetails, refreshExpiration);
   }
@@ -67,7 +74,7 @@ public class JwtService {
           UserDetails userDetails,
           long expiration
   ) {
-
+    LOGGER.info("Building token for user {}", userDetails.getUsername());
     return Jwts
             .builder()
             .setClaims(extraClaims)
@@ -80,7 +87,9 @@ public class JwtService {
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
     final String username = extractUsername(token);
-    return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    boolean isValid = (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    LOGGER.info("Token validation for user {}: {}", username, isValid);
+    return isValid;
   }
 
   private boolean isTokenExpired(String token) {
@@ -92,8 +101,6 @@ public class JwtService {
   }
 
   private Claims extractAllClaims(String token) {
-
-
     try {
       return Jwts
               .parserBuilder()
@@ -102,9 +109,11 @@ public class JwtService {
               .parseClaimsJws(token)
               .getBody();
     } catch (ExpiredJwtException e) {
-      throw new ExpiredTokenException("Token has expired");
+      LOGGER.warn("Expired token: {}", e.getMessage());
+      throw new ExpiredTokenException(ExceptionMessageConstants.EXPIRED_TOKEN_MSG);
     } catch (IllegalArgumentException e) {
-      throw new InvalidTokenException("Token is invalid");
+      LOGGER.warn("Invalid token: {}", e.getMessage());
+      throw new InvalidTokenException(ExceptionMessageConstants.INVALID_TOKEN_MSG);
     }
   }
 

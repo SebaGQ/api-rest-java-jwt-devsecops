@@ -1,5 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.auth.services;
 
+import com.medicalhourmanagement.medicalhourmanagement.constants.AuthConstants;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,18 +18,18 @@ public class LogoutService implements LogoutHandler {
 
   @Override
   public void logout(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      Authentication authentication
+          HttpServletRequest request,
+          HttpServletResponse response,
+          Authentication authentication
   ) {
-    final String authHeader = request.getHeader("Authorization");
+    final String authHeader = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
     final String jwt;
-    if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+    if (authHeader == null || !authHeader.startsWith(AuthConstants.BEARER_PREFIX)) {
       return;
     }
-    jwt = authHeader.substring(7);
+    jwt = authHeader.substring(AuthConstants.BEARER_PREFIX.length());
     var storedToken = tokenRepository.findByAccessToken(jwt)
-        .orElse(null);
+            .orElse(null);
     if (storedToken != null) {
       storedToken.setExpired(true);
       storedToken.setRevoked(true);

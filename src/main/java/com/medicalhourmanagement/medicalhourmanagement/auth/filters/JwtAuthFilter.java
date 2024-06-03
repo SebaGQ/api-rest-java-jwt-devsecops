@@ -1,6 +1,8 @@
 package com.medicalhourmanagement.medicalhourmanagement.auth.filters;
 
 import com.medicalhourmanagement.medicalhourmanagement.auth.services.JwtService;
+import com.medicalhourmanagement.medicalhourmanagement.constants.AuthConstants;
+import com.medicalhourmanagement.medicalhourmanagement.constants.EndpointsConstants;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.ExpiredTokenException;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.InvalidTokenException;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.TokenRepository;
@@ -24,10 +26,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-  private static final String AUTHORIZATION_HEADER = "Authorization";
-  private static final String BEARER_PREFIX = "Bearer ";
-  private static final String ENDPOINT_AUTH = "/api/v1/auth";
-
   private final JwtService jwtService;
   private final UserDetailsService userDetailsService;
   private final TokenRepository tokenRepository;
@@ -43,7 +41,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       return;
     }
 
-    final String authHeader = request.getHeader(AUTHORIZATION_HEADER);
+    final String authHeader = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
     if (isInvalidAuthHeader(authHeader)) {
       filterChain.doFilter(request, response);
       return;
@@ -70,15 +68,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
   }
 
   private boolean isAuthPath(HttpServletRequest request) {
-    return request.getServletPath().contains(ENDPOINT_AUTH);
+    return request.getServletPath().contains(EndpointsConstants.ENDPOINT_AUTH);
   }
 
   private boolean isInvalidAuthHeader(String authHeader) {
-    return authHeader == null || !authHeader.startsWith(BEARER_PREFIX);
+    return authHeader == null || !authHeader.startsWith(AuthConstants.BEARER_PREFIX);
   }
 
   private String extractJwtFromHeader(String authHeader) {
-    return authHeader.substring(BEARER_PREFIX.length());
+    return authHeader.substring(AuthConstants.BEARER_PREFIX.length());
   }
 
   private boolean isNotAuthenticated() {

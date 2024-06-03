@@ -1,5 +1,7 @@
 package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
+import com.medicalhourmanagement.medicalhourmanagement.constants.RoleConstants;
+import com.medicalhourmanagement.medicalhourmanagement.constants.ExceptionMessageConstants;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.RequestAppointmentDTO;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.AppointmentDTO;
 import com.medicalhourmanagement.medicalhourmanagement.entities.Appointment;
@@ -42,6 +44,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public List<AppointmentDTO> getAppointments() {
+        LOGGER.info("Fetching all appointments");
         return appointmentRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .toList();
@@ -49,6 +52,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public AppointmentDTO getAppointmentById(@NonNull final Long id) {
+        LOGGER.info("Fetching appointment with ID: {}", id);
         return convertToDTO(getAppointmentByIdHelper(id));
     }
 
@@ -63,11 +67,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         Doctor doctor = getDoctor(createAppointmentRest.getDoctor());
 
         validateUserAuthorization(email, isAdminOrModerator, patient);
-
         validateAppointmentTime(createAppointmentRest.getDate(), doctor.getId(), patient.getId());
 
         Appointment appointment = buildAppointment(createAppointmentRest.getDate(), doctor, patient);
-
+        LOGGER.info("Creating appointment for patient {} with doctor {} at {}", patient.getId(), doctor.getId(), createAppointmentRest.getDate());
         return saveAppointment(appointment);
     }
 
@@ -83,25 +86,25 @@ public class AppointmentServiceImpl implements AppointmentService {
         Doctor doctor = existingAppointment.getDoctor();
 
         validateUserAuthorization(email, isAdminOrModerator, patient);
-
         updateExistingAppointment(existingAppointment, appointmentRequest);
-
         validateAppointmentTime(appointmentRequest.getDate(), doctor.getId(), patient.getId());
 
+        LOGGER.info("Updating appointment with ID: {}", id);
         return saveAppointment(existingAppointment);
     }
 
     @Override
     @Transactional
     public void deleteAppointmentById(@NonNull final Long id) {
+        LOGGER.info("Deleting appointment with ID: {}", id);
         getAppointmentByIdHelper(id);
         appointmentRepository.deleteById(id);
     }
 
     private boolean isAdminOrModerator(Collection<? extends GrantedAuthority> authorities) {
         return authorities.stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN") ||
-                        grantedAuthority.getAuthority().equals("ROLE_MODERATOR"));
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(RoleConstants.ROLE_ADMIN) ||
+                        grantedAuthority.getAuthority().equals(RoleConstants.ROLE_MANAGER));
     }
 
     private Patient getPatient(Long patientId) {
@@ -114,7 +117,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private void validateUserAuthorization(String email, boolean isAdminOrModerator, Patient patient) {
         if (!isAdminOrModerator && !patient.getEmail().equals(email)) {
-            throw new UnauthorizedAppointmentException("You are not authorized to create/update an appointment for this patient");
+            LOGGER.warn("Unauthorized access attempt by user {}", email);
+            throw new UnauthorizedAppointmentException(ExceptionMessageConstants.UNAUTHORIZED_MSG);
         }
     }
 
@@ -122,13 +126,15 @@ public class AppointmentServiceImpl implements AppointmentService {
         List<Appointment> appointments = appointmentRepository.findByDoctorIdOrPatientId(doctorId, patientId);
 
         if (appointmentTime.getHour() < 8 || appointmentTime.getHour() >= 18) {
-            throw new RequestException("APPOINTMENT TIME MUST BE BETWEEN 8 AM AND 6 PM");
+            LOGGER.warn("Invalid appointment time: {}", appointmentTime);
+            throw new RequestException(ExceptionMessageConstants.TIME_INVALID_MSG);
         }
 
         appointments.forEach(existingAppointment -> {
             long timeDifference = Math.abs(Duration.between(existingAppointment.getDate(), appointmentTime).toMinutes());
             if (timeDifference < 60) {
-                throw new RequestException("THE TIME OF THE APPOINTMENT MUST HAVE A MINIMUM 60 MINUTE GAP WITH OTHER APPOINTMENTS");
+                LOGGER.warn("Appointment time conflict for doctor {} or patient {} at {}", doctorId, patientId, appointmentTime);
+                throw new RequestException(ExceptionMessageConstants.TIME_CONFLICT_MSG);
             }
         });
     }
@@ -143,9 +149,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private AppointmentDTO saveAppointment(Appointment appointment) {
         try {
-            return convertToDTO(appointmentRepository.save(appointment));
+            Appointment savedAppointment = appointmentRepository.save(appointment);
+            LOGGER.info("Appointment saved successfully with ID: {}", savedAppointment.getId());
+            return convertToDTO(savedAppointment);
         } catch (Exception e) {
-            throw new InternalServerErrorException("ERROR DURING APPOINTMENT SAVE");
+            LOGGER.error("Error occurred during appointment save", e);
+            throw new InternalServerErrorException(ExceptionMessageConstants.INTERNAL_SERVER_ERROR_MSG);
         }
     }
 
@@ -157,7 +166,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private Appointment getAppointmentByIdHelper(@NonNull final Long id) {
         return appointmentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("APPOINTMENT NOT FOUND"));
+                .orElseThrow(() -> {
+                    LOGGER.warn("Appointment not found with ID: {}", id);
+                    return new NotFoundException(ExceptionMessageConstants.APPOINTMENT_NOT_FOUND_MSG);
+                });
     }
 
     private AppointmentDTO convertToDTO(Appointment appointment) {

@@ -1,6 +1,7 @@
 package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medicalhourmanagement.medicalhourmanagement.constants.AuthConstants;
 import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
 import com.medicalhourmanagement.medicalhourmanagement.enums.Role;
 import com.medicalhourmanagement.medicalhourmanagement.enums.TokenType;
@@ -21,13 +22,16 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-  private static final String BEARER_PREFIX = "Bearer ";
+  private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
   private final PatientRepository repository;
   private final TokenRepository tokenRepository;
@@ -37,6 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   @Override
   public AuthenticationResponseDTO register(RegisterRequestDTO request) {
+    LOGGER.info("Registering new user with email: {}", request.getEmail());
     Patient user = buildPatientFromRequest(request);
     Patient savedUser = repository.save(user);
     String jwtToken = jwtService.generateToken(user);
@@ -47,8 +52,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   @Override
   public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
+    LOGGER.info("Authenticating user with email: {}", request.getEmail());
     Patient user = repository.findByEmail(request.getEmail())
-            .orElseThrow(() -> new BadCredentialsException("User not found"));
+            .orElseThrow(() -> new BadCredentialsException("Bad Credentials"));
 
     authenticateUser(request.getEmail(), request.getPassword());
 
@@ -63,6 +69,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
     if (isInvalidAuthHeader(authHeader)) {
+      LOGGER.warn("Invalid authorization header during token refresh");
       return;
     }
 
@@ -75,11 +82,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   private boolean isInvalidAuthHeader(String authHeader) {
-    return authHeader == null || !authHeader.startsWith(BEARER_PREFIX);
+    return authHeader == null || !authHeader.startsWith(AuthConstants.BEARER_PREFIX);
   }
 
   private String extractToken(String authHeader) {
-    return authHeader.substring(BEARER_PREFIX.length());
+    return authHeader.substring(AuthConstants.BEARER_PREFIX.length());
   }
 
   private void processRefreshToken(HttpServletResponse response, String refreshToken, String userEmail) throws IOException {
@@ -93,7 +100,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   private void writeAuthResponse(HttpServletResponse response, AuthenticationResponseDTO authResponse) throws IOException {
-    response.setContentType("application/json");
+    response.setContentType(AuthConstants.CONTENT_TYPE_AUTH);
     new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
   }
 

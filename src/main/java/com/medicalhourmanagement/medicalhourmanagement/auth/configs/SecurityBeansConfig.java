@@ -1,6 +1,7 @@
 package com.medicalhourmanagement.medicalhourmanagement.auth.configs;
 
 
+import com.medicalhourmanagement.medicalhourmanagement.constants.ExceptionMessageConstants;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +30,7 @@ public class SecurityBeansConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessageConstants.USER_NOT_FOUND_MSG));
     }
     @Bean
     public PasswordEncoder passwordEncoder() {

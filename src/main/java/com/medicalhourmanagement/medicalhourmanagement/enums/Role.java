@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import static com.medicalhourmanagement.medicalhourmanagement.enums.Permission.*;
 
+//Cualquier cambio hecho aca debe comprobarse en RoleConstants
 @RequiredArgsConstructor
 public enum Role {
 
