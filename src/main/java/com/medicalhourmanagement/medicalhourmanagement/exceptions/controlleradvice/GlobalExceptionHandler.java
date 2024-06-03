@@ -1,5 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.exceptions.controlleradvice;
 
+import com.medicalhourmanagement.medicalhourmanagement.constants.ExceptionMessageConstants;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,24 +75,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InternalServerErrorException.class)
     public ResponseEntity<ExceptionDTO> handleInternalServerErrorException(InternalServerErrorException ex, WebRequest request) {
         LOGGER.error("InternalServerErrorException: {}", ex.getMessage(), ex);
-        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request);
+        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionMessageConstants.INTERNAL_SERVER_ERROR_MSG, request);
     }
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ExceptionDTO> handleNullPointerException(NullPointerException ex, WebRequest request) {
         LOGGER.error("NullPointerException: {}", ex.getMessage(), ex);
-        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request);
+        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionMessageConstants.INTERNAL_SERVER_ERROR_MSG, request);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ExceptionDTO> handleRuntimeException(RuntimeException ex, WebRequest request) {
         LOGGER.error("RuntimeException: {}", ex.getMessage(), ex);
-        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request);
+        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionMessageConstants.INTERNAL_SERVER_ERROR_MSG, request);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionDTO> handleGenericException(Exception ex, WebRequest request) {
         LOGGER.error("Exception: {}", ex.getMessage(), ex);
-        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request);
+        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionMessageConstants.INTERNAL_SERVER_ERROR_MSG, request);
     }
 }

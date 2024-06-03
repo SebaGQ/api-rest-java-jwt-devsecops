@@ -2,6 +2,11 @@ package com.medicalhourmanagement.medicalhourmanagement.constants;
 
 public class EndpointsConstants {
 
+    // Constructor privado para evitar la instanciación
+    private EndpointsConstants() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
     //Los pattern son usados para la configuracion de spring security
     public static final String ENDPOINT_BASE_API = "/api/v1";
     public static final String ENDPOINT_AUTH = ENDPOINT_BASE_API + "/auth";

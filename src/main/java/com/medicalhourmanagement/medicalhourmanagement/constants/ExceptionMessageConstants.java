@@ -2,6 +2,11 @@ package com.medicalhourmanagement.medicalhourmanagement.constants;
 
 public class ExceptionMessageConstants {
 
+    // Constructor privado para evitar la instanciación
+    private ExceptionMessageConstants() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
     /**
      * AUTH
      */
@@ -36,5 +41,6 @@ public class ExceptionMessageConstants {
     /**
     *   API RESPONSES
      */
-    public static final String INTERNAL_SERVER_ERROR_MSG = "An error occurred during appointment save";
+    public static final String INTERNAL_SERVER_ERROR_MSG =     "An unexpected error occurred";
+
 }
