@@ -100,7 +100,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
   private void handleException(HttpServletResponse response, String message, int status) throws IOException {
     response.setStatus(status);
-    response.setContentType("application/json");
+    response.setContentType(AuthConstants.CONTENT_TYPE_JSON);
     response.getWriter().write("{\"error\": \"" + message + "\"}");
     response.getWriter().flush();
   }

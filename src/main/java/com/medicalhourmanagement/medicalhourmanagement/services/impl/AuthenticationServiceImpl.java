@@ -100,7 +100,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   private void writeAuthResponse(HttpServletResponse response, AuthenticationResponseDTO authResponse) throws IOException {
-    response.setContentType(AuthConstants.CONTENT_TYPE_AUTH);
+    response.setContentType(AuthConstants.CONTENT_TYPE_JSON);
     new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
   }
 
