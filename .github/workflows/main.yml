@@ -1,0 +1,208 @@
+name: DevSecOps Pipeline
+
+on:
+  push:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java JDK para Maven
+        uses: actions/setup-java@main
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Compilar Dependencias Maven
+        run: mvn clean package
+
+      - name: Test Unitarios y Reporte Cobertura
+        run: mvn verify
+
+      - name: Subir Reporte JaCoCo como Artefacto
+        uses: actions/upload-artifact@v2
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/index.html
+
+      - name: Setup Java JDK para SonarCloud
+        uses: actions/setup-java@main
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Analisis Sonar Cloud
+        run: |
+          mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.organization=sebagq \
+          -Dsonar.projectKey=SebaGQ_api-rest-java
+
+      - name: SonarQube Quality Gate check
+        id: sonarqube-quality-gate-check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          scanMetadataReportFile: target/sonar/report-task.txt
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker Login
+        uses: docker/login-action@v3.1.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker Build
+        run: docker build -t medical-hour-management-repo/medical-hour-management:latest .
+
+      - name: Docker Push
+        run: docker push medical-hour-management-repo/medical-hour-management:latest
+
+  SCA:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install Dependencies
+        run: mvn install
+
+      - name: Dependency Check
+        id: dependency-check
+        uses: dependency-check/Dependency-Check_Action@main
+        env:
+          JAVA_HOME: /opt/jdk
+        with:
+          project: '${{ github.event.repository.name }}'
+          path: '.'
+          format: 'SARIF'
+          args: > 
+            --enableRetired
+
+      - name: Upload SARIF report
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: ${{github.workspace}}/reports/dependency-check-report.sarif
+
+  ImageAnalysis:
+    needs: SCA
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker Login
+        uses: docker/login-action@v3.1.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker Pull
+        run: docker pull medical-hour-management-repo/medical-hour-management:latest
+
+      - name: Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'medical-hour-management-repo/medical-hour-management:latest'
+          format: 'sarif'
+          output: 'trivy-results-docker.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results-docker.sarif'
+
+      - name: Check Trivy Vulnerabilities
+        id: check_trivy
+        run: |
+          CRITICAL_COUNT=$(jq '[ .runs[].results[] as $result | .runs[].tool.driver.rules[] as $rule | select($result.ruleId == $rule.id) | select($rule.properties.tags[]? == "CRITICAL") ] | length' trivy-results-docker.sarif)
+          HIGH_COUNT=$(jq '[ .runs[].results[] as $result | .runs[].tool.driver.rules[] as $rule | select($result.ruleId == $rule.id) | select($rule.properties.tags[]? == "HIGH") ] | length' trivy-results-docker.sarif)
+          MEDIUM_COUNT=$(jq '[ .runs[].results[] as $result | .runs[].tool.driver.rules[] as $rule | select($result.ruleId == $rule.id) | select($rule.properties.tags[]? == "MEDIUM") ] | length' trivy-results-docker.sarif)
+          echo "Critical vulnerabilities: $CRITICAL_COUNT"
+          echo "High vulnerabilities: $HIGH_COUNT"
+          echo "Medium vulnerabilities: $MEDIUM_COUNT"
+          if [ "$CRITICAL_COUNT" -gt 0 ] || [ "$HIGH_COUNT" -gt 0 ] || [ "$MEDIUM_COUNT" -gt 0 ]; then
+            echo "Vulnerabilities found."
+            exit 1
+          else
+            echo "No vulnerabilities found."
+
+  DAST:
+    needs: ImageAnalysis
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker Login
+        uses: docker/login-action@v3.1.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker Run
+        run: |
+          docker pull medical-hour-management-repo/medical-hour-management:latest
+          docker run -d -p 80:80 --name medical-hour-app ymedical-hour-management-repo/medical-hour-management:latest
+
+      - name: ZAP Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'http://localhost:8080'
+          fail-action: false
+
+  Deploy:
+    needs: DAST
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Despliegue aplicación y servicio
+        run: |
+          kubectl apply -f deploy.yaml
+          kubectl apply -f service.yaml
+
+  Test:
+    needs: Deploy
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Descargar y descomprimir JMeter
+        run: |
+          curl -L https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz -o jmeter.tgz
+          mkdir jmeter
+          tar -xf jmeter.tgz -C jmeter
+
+      - name: Ejecutar pruebas de rendimiento con JMeter
+        run: |
+          jmeter/apache-jmeter-5.6.3/bin/jmeter -n -t my_test_plan.jmx -l test_results.jtl -e -o ./report/
+
+      - name: Subir Reportes de Rendimiento como Artefacto
+        uses: actions/upload-artifact@v2
+        with:
+          name: jmeter-report
+          path: report/
+
+ 
