@@ -61,10 +61,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker Build
-        run: docker build -t sebagq/medical-hour-management-repo/medical-hour-management:latest .
+        run: docker build -t sebagq/medical-hour-management:latest .
 
       - name: Docker Push
-        run: docker push sebagq/medical-hour-management-repo/medical-hour-management:latest
+        run: docker push sebagq/medical-hour-management:latest
 
   SCA:
     needs: Build
@@ -91,7 +91,7 @@ jobs:
           project: '${{ github.event.repository.name }}'
           path: '.'
           format: 'SARIF'
-          args: > 
+          args: >
             --enableRetired
 
       - name: Upload SARIF report
@@ -113,12 +113,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker Pull
-        run: docker pull sebagq/medical-hour-management-repo/medical-hour-management:latest
+        run: docker pull sebagq/medical-hour-management:latest
 
       - name: Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'sebagq/medical-hour-management-repo/medical-hour-management:latest'
+          image-ref: 'sebagq/medical-hour-management:latest'
           format: 'sarif'
           output: 'trivy-results-docker.sarif'
           severity: 'CRITICAL,HIGH,MEDIUM'
@@ -161,8 +161,8 @@ jobs:
 
       - name: Docker Run
         run: |
-          docker pull sebagq/medical-hour-management-repo/medical-hour-management:latest
-          docker run -d -p 8080:8080 --name medical-hour-app sebagq/medical-hour-management-repo/medical-hour-management:latest
+          docker pull sebagq/medical-hour-management:latest
+          docker run -d -p 8080:8080 --name medical-hour-app sebagq/medical-hour-management:latest
 
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.12.0
@@ -204,5 +204,3 @@ jobs:
         with:
           name: jmeter-report
           path: report/
-
-
