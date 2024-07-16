@@ -95,7 +95,7 @@ jobs:
             --enableRetired
 
       - name: Upload SARIF report
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{github.workspace}}/reports/dependency-check-report.sarif
 
