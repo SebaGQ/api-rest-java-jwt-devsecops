@@ -203,12 +203,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Descargar y descomprimir JMeter
-        shell: pwsh
+      - name: Verificar y descargar JMeter si es necesario
         run: |
-          Invoke-WebRequest -Uri "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz" -OutFile "jmeter.tgz"
-          New-Item -ItemType Directory -Force -Path jmeter
-          tar -xf jmeter.tgz -C jmeter
+          if [ ! -d "jmeter/bin" ]; then
+            echo "JMeter no encontrado, descargando..."
+            wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz -O jmeter.tgz
+            mkdir -p jmeter
+            tar -xzf jmeter.tgz -C jmeter --strip-components=1
+            rm jmeter.tgz
+          else
+            echo "JMeter ya está instalado, omitiendo descarga"
+          fi
 
       - name: Ejecutar pruebas de rendimiento con JMeter
         run: |
