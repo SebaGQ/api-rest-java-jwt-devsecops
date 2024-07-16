@@ -1,6 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.controllers;
 
-import com.medicalhourmanagement.medicalhourmanagement.constants.EndpointsConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.EndpointsConstants;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.request.AuthenticationRequestDTO;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.response.AuthenticationResponseDTO;
 import com.medicalhourmanagement.medicalhourmanagement.services.impl.AuthenticationServiceImpl;

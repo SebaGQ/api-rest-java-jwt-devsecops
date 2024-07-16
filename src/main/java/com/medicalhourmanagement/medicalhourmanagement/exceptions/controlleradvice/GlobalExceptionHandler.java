@@ -1,6 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.exceptions.controlleradvice;
 
-import com.medicalhourmanagement.medicalhourmanagement.constants.ExceptionMessageConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.ExceptionMessageConstants;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

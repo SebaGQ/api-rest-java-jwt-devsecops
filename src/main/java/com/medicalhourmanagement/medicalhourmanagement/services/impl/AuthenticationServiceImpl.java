@@ -1,7 +1,7 @@
 package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.medicalhourmanagement.medicalhourmanagement.constants.AuthConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.AuthConstants;
 import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
 import com.medicalhourmanagement.medicalhourmanagement.entities.User;
 import com.medicalhourmanagement.medicalhourmanagement.utils.enums.Role;

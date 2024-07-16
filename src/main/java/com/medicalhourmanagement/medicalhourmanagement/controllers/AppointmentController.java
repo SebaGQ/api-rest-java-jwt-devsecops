@@ -1,6 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.controllers;
 
-import com.medicalhourmanagement.medicalhourmanagement.constants.EndpointsConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.EndpointsConstants;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.AppointmentDTO;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.request.RequestAppointmentDTO;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.NotFoundException;

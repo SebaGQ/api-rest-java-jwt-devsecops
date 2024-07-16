@@ -1,6 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.security.services;
 
-import com.medicalhourmanagement.medicalhourmanagement.constants.AuthConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.AuthConstants;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -34,4 +35,11 @@ public class Doctor extends User {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "doctor")
     @JsonManagedReference("doctor-appointments")
     private List<Appointment> appointments;
+    @ManyToMany
+    @JoinTable(
+            name = "doctor_specialties",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name = "specialty_id")
+    )
+    private Set<Specialty> specialties;
 }

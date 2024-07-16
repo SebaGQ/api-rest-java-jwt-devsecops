@@ -1,4 +1,4 @@
-package com.medicalhourmanagement.medicalhourmanagement.constants;
+package com.medicalhourmanagement.medicalhourmanagement.utils.constants;
 
 public class ExceptionMessageConstants {
 

@@ -1,7 +1,7 @@
 package com.medicalhourmanagement.medicalhourmanagement.configs;
 
 
-import com.medicalhourmanagement.medicalhourmanagement.constants.ExceptionMessageConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.ExceptionMessageConstants;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

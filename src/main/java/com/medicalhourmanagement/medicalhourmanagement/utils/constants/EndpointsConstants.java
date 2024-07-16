@@ -1,4 +1,4 @@
-package com.medicalhourmanagement.medicalhourmanagement.constants;
+package com.medicalhourmanagement.medicalhourmanagement.utils.constants;
 
 public class EndpointsConstants {
 
@@ -20,4 +20,7 @@ public class EndpointsConstants {
     public static final String ENDPOINT_PATIENTS_PATTERN = ENDPOINT_PATIENTS + "/**";
     public static final String ENDPOINT_APPOINTMENTS = ENDPOINT_BASE_API + "/appointments";
     public static final String ENDPOINT_APPOINTMENTS_PATTERN = ENDPOINT_APPOINTMENTS + "/**";
+
+    public static final String ENDPOINT_SPECIALTIES = ENDPOINT_BASE_API + "/specialties";
+    public static final String ENDPOINT_SPECIALTIES_PATTERN = ENDPOINT_APPOINTMENTS + "/**";
 }

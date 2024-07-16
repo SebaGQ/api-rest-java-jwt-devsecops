@@ -1,7 +1,7 @@
 package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
-import com.medicalhourmanagement.medicalhourmanagement.constants.RoleConstants;
-import com.medicalhourmanagement.medicalhourmanagement.constants.ExceptionMessageConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.RoleConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.ExceptionMessageConstants;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.request.RequestAppointmentDTO;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.AppointmentDTO;
 import com.medicalhourmanagement.medicalhourmanagement.entities.Appointment;

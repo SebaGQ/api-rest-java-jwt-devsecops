@@ -1,6 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.security.services;
 
-import com.medicalhourmanagement.medicalhourmanagement.constants.AuthConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.AuthConstants;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.ExpiredTokenException;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.InvalidTokenException;
 import io.jsonwebtoken.Claims;
@@ -9,7 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import com.medicalhourmanagement.medicalhourmanagement.constants.ExceptionMessageConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.ExceptionMessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

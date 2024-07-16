@@ -1,8 +1,8 @@
 package com.medicalhourmanagement.medicalhourmanagement.security.filters;
 
 import com.medicalhourmanagement.medicalhourmanagement.security.services.JwtService;
-import com.medicalhourmanagement.medicalhourmanagement.constants.AuthConstants;
-import com.medicalhourmanagement.medicalhourmanagement.constants.EndpointsConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.AuthConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.EndpointsConstants;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.ExpiredTokenException;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.InvalidTokenException;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.TokenRepository;

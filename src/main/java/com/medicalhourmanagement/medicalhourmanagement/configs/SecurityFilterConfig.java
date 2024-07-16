@@ -1,8 +1,8 @@
 package com.medicalhourmanagement.medicalhourmanagement.configs;
 
 import com.medicalhourmanagement.medicalhourmanagement.security.filters.JwtAuthFilter;
-import com.medicalhourmanagement.medicalhourmanagement.constants.EndpointsConstants;
-import com.medicalhourmanagement.medicalhourmanagement.constants.RoleConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.EndpointsConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.RoleConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,6 +55,10 @@ public class SecurityFilterConfig {
                                 .requestMatchers(POST, EndpointsConstants.ENDPOINT_APPOINTMENTS_PATTERN).authenticated()
                                 .requestMatchers(PUT, EndpointsConstants.ENDPOINT_APPOINTMENTS_PATTERN).hasAnyRole(RoleConstants.ROLE_MANAGER, RoleConstants.ROLE_ADMIN)
                                 .requestMatchers(DELETE, EndpointsConstants.ENDPOINT_APPOINTMENTS_PATTERN).hasAnyRole(RoleConstants.ROLE_MANAGER, RoleConstants.ROLE_ADMIN)
+
+                                .requestMatchers(GET, EndpointsConstants.ENDPOINT_SPECIALTIES_PATTERN).authenticated()
+                                .requestMatchers(POST, EndpointsConstants.ENDPOINT_SPECIALTIES_PATTERN).hasAnyRole(RoleConstants.ROLE_ADMIN)
+
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

@@ -7,8 +7,8 @@ import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.NotFoundE
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.UnauthorizedAppointmentException;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.PatientRepository;
 import com.medicalhourmanagement.medicalhourmanagement.services.PatientService;
-import com.medicalhourmanagement.medicalhourmanagement.constants.ExceptionMessageConstants;
-import com.medicalhourmanagement.medicalhourmanagement.constants.RoleConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.ExceptionMessageConstants;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constants.RoleConstants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
