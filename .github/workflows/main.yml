@@ -158,6 +158,8 @@ jobs:
   DAST:
     needs: ImageAnalysis
     runs-on: self-hosted
+    permissions:
+      issues: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -180,7 +182,7 @@ jobs:
         uses: zaproxy/action-baseline@v0.12.0
         with:
           target: 'http://localhost:8080'
-          fail-action: false
+          fail_action: false
 
   Deploy:
     needs: DAST
