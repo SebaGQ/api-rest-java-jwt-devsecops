@@ -162,7 +162,7 @@ jobs:
       - name: Docker Run
         run: |
           docker pull medical-hour-management-repo/medical-hour-management:latest
-          docker run -d -p 80:80 --name medical-hour-app ymedical-hour-management-repo/medical-hour-management:latest
+          docker run -d -p 8080:8080 --name medical-hour-app medical-hour-management-repo/medical-hour-management:latest
 
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.12.0
