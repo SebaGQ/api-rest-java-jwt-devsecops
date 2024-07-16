@@ -25,8 +25,8 @@ public class DatabaseInitializer implements CommandLineRunner {
             Doctor doctor = Doctor.builder()
                     .firstName("John")
                     .lastName("Doe")
-                    .email("john.doe@example.com")
-                    .password(passwordEncoder.encode("password"))
+                    .email("admin@email.com")
+                    .password(passwordEncoder.encode("admin12345"))
                     .role(Role.ADMIN)
                     .build();
             doctorRepository.save(doctor);
@@ -37,8 +37,8 @@ public class DatabaseInitializer implements CommandLineRunner {
             Patient patient = Patient.builder()
                     .firstName("Jane")
                     .lastName("Doe")
-                    .email("jane.doe@example.com")
-                    .password(passwordEncoder.encode("password"))
+                    .email("doctor@email.com")
+                    .password(passwordEncoder.encode("user12345"))
                     .rut("12345678-9")
                     .phoneNumber("123456789")
                     .address("123 Main St")
