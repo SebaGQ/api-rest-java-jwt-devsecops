@@ -203,7 +203,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verificar y descargar JMeter si es necesario
+      - name: Descargar y descomprimir JMeter
         run: |
           if [ ! -d "jmeter/bin" ]; then
             echo "JMeter no encontrado, descargando..."
@@ -214,6 +214,7 @@ jobs:
           else
             echo "JMeter ya está instalado, omitiendo descarga"
           fi
+        shell: bash
 
       - name: Ejecutar pruebas de rendimiento con JMeter
         run: |
