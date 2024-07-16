@@ -8,7 +8,7 @@
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
         <collectionProp name="Arguments.arguments">
           <elementProp name="username" elementType="Argument">
-            <stringProp name="Argument.name">username</stringProp>
+            <stringProp name="Argument.name">email</stringProp>
             <stringProp name="Argument.value">admin2@email.com</stringProp>
           </elementProp>
           <elementProp name="password" elementType="Argument">
@@ -48,7 +48,7 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name"></stringProp>
-                <stringProp name="Argument.value">{"firstname":"Admin","lastname":"User","email":"${username}","password":"${password}"}</stringProp>
+                <stringProp name="Argument.value">{"firstname":"Admin","lastname":"User","email":"${email}","password":"${password}"}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
                 <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 <stringProp name="Argument.contentType">application/json</stringProp>
@@ -74,7 +74,7 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name"></stringProp>
-                <stringProp name="Argument.value">{"email":"${username}","password":"${password}"}</stringProp>
+                <stringProp name="Argument.value">{"email":"${email}","password":"${password}"}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
                 <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 <stringProp name="Argument.contentType">application/json</stringProp>
