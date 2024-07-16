@@ -1,6 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 
-import com.medicalhourmanagement.medicalhourmanagement.dtos.ChangePasswordRequestDTO;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.request.ChangePasswordRequestDTO;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.PatientDTO;
 import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.NotFoundException;
@@ -62,6 +62,10 @@ public class PatientServiceImpl implements PatientService {
         patientDTO.setId(null);
         Patient patientEntity = convertToEntity(patientDTO);
         Patient savedPatient = patientRepository.save(patientEntity);
+        if (savedPatient == null) {
+            LOGGER.error("Failed to save patient");
+            throw new IllegalStateException("Failed to save patient");
+        }
         LOGGER.info("Patient saved successfully with ID: {}", savedPatient.getId());
         return convertToRest(savedPatient);
     }
@@ -75,6 +79,10 @@ public class PatientServiceImpl implements PatientService {
         existingPatient.setFirstName(patientDTO.getFirstName());
         existingPatient.setLastName(patientDTO.getLastName());
         Patient updatedPatient = patientRepository.save(existingPatient);
+        if (updatedPatient == null) {
+            LOGGER.error("Failed to update patient");
+            throw new IllegalStateException("Failed to update patient");
+        }
         LOGGER.info("Patient updated successfully with ID: {}", updatedPatient.getId());
         return convertToRest(updatedPatient);
     }
@@ -84,7 +92,11 @@ public class PatientServiceImpl implements PatientService {
     @PreAuthorize("hasRole('" + RoleConstants.ROLE_ADMIN + "')")
     public void deletePatientById(@NonNull final Long patientId) {
         LOGGER.info("Deleting patient with ID: {}", patientId);
-        getPatientByIdHelper(patientId);
+        Patient patient = getPatientByIdHelper(patientId);
+        if (patient == null) {
+            LOGGER.error("Patient with ID: {} not found", patientId);
+            throw new NotFoundException("Patient not found");
+        }
         patientRepository.deleteById(patientId);
         LOGGER.info("Patient deleted successfully with ID: {}", patientId);
     }

@@ -3,13 +3,14 @@ package com.medicalhourmanagement.medicalhourmanagement.services.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medicalhourmanagement.medicalhourmanagement.constants.AuthConstants;
 import com.medicalhourmanagement.medicalhourmanagement.entities.Patient;
-import com.medicalhourmanagement.medicalhourmanagement.enums.Role;
-import com.medicalhourmanagement.medicalhourmanagement.enums.TokenType;
+import com.medicalhourmanagement.medicalhourmanagement.entities.User;
+import com.medicalhourmanagement.medicalhourmanagement.utils.enums.Role;
+import com.medicalhourmanagement.medicalhourmanagement.utils.enums.TokenType;
 import com.medicalhourmanagement.medicalhourmanagement.entities.Token;
-import com.medicalhourmanagement.medicalhourmanagement.auth.services.JwtService;
-import com.medicalhourmanagement.medicalhourmanagement.dtos.RegisterRequestDTO;
-import com.medicalhourmanagement.medicalhourmanagement.dtos.AuthenticationRequestDTO;
-import com.medicalhourmanagement.medicalhourmanagement.dtos.AuthenticationResponseDTO;
+import com.medicalhourmanagement.medicalhourmanagement.security.services.JwtService;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.request.RegisterRequestDTO;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.request.AuthenticationRequestDTO;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.response.AuthenticationResponseDTO;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.TokenRepository;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.PatientRepository;
 import com.medicalhourmanagement.medicalhourmanagement.services.AuthenticationService;
@@ -127,9 +128,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             .build();
   }
 
-  private void saveUserToken(Patient patient, String jwtToken) {
+  private void saveUserToken(User user, String jwtToken) {
     Token token = Token.builder()
-            .patient(patient)
+            .user(user)
             .accessToken(jwtToken)
             .tokenType(TokenType.BEARER)
             .expired(false)

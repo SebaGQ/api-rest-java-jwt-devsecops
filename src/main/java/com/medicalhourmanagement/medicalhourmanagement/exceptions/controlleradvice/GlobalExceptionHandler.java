@@ -69,6 +69,13 @@ public class GlobalExceptionHandler {
         return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ExceptionDTO> handleIllegalStateExceptionn(IllegalStateException ex, WebRequest request) {
+        LOGGER.warn("IllegalStateException: {}", ex.getMessage(), ex);
+        return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
+
+
     @ExceptionHandler(DuplicateKeyException.class)
     public ResponseEntity<ExceptionDTO> handleDuplicateKeyException(DuplicateKeyException ex, WebRequest request) {
         LOGGER.warn("DuplicateKeyException: {}", ex.getMessage(), ex);

@@ -1,10 +1,10 @@
 package com.medicalhourmanagement.medicalhourmanagement.controllers;
 
 import com.medicalhourmanagement.medicalhourmanagement.constants.EndpointsConstants;
-import com.medicalhourmanagement.medicalhourmanagement.dtos.AuthenticationRequestDTO;
-import com.medicalhourmanagement.medicalhourmanagement.dtos.AuthenticationResponseDTO;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.request.AuthenticationRequestDTO;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.response.AuthenticationResponseDTO;
 import com.medicalhourmanagement.medicalhourmanagement.services.impl.AuthenticationServiceImpl;
-import com.medicalhourmanagement.medicalhourmanagement.dtos.RegisterRequestDTO;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.request.RegisterRequestDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

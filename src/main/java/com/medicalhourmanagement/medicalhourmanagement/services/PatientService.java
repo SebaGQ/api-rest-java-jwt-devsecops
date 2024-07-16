@@ -1,6 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.services;
 
-import com.medicalhourmanagement.medicalhourmanagement.dtos.ChangePasswordRequestDTO;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.request.ChangePasswordRequestDTO;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.PatientDTO;
 import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;

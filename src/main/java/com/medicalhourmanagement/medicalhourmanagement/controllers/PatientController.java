@@ -1,11 +1,9 @@
 package com.medicalhourmanagement.medicalhourmanagement.controllers;
 
-import com.medicalhourmanagement.medicalhourmanagement.constants.EndpointsConstants;
-import com.medicalhourmanagement.medicalhourmanagement.dtos.ChangePasswordRequestDTO;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.PatientDTO;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.request.ChangePasswordRequestDTO;
+import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.NotFoundException;
 import com.medicalhourmanagement.medicalhourmanagement.services.PatientService;
-import jakarta.validation.Valid;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = EndpointsConstants.ENDPOINT_PATIENTS)
+@RequestMapping("/api/v1/patients")
 @RequiredArgsConstructor
 public class PatientController {
 
@@ -29,46 +28,71 @@ public class PatientController {
         LOGGER.info("Received request to get all patients");
         List<PatientDTO> patients = patientService.getPatients();
         LOGGER.info("Returning {} patients", patients.size());
-        return ResponseEntity.status(HttpStatus.OK).body(patients);
+        return ResponseEntity.ok(patients);
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<PatientDTO> getPatientById(@NonNull @PathVariable final Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<PatientDTO> getPatientById(@PathVariable Long id) {
         LOGGER.info("Received request to get patient with ID: {}", id);
-        PatientDTO patient = patientService.getPatientById(id);
-        LOGGER.info("Returning patient with ID: {}", id);
-        return ResponseEntity.status(HttpStatus.OK).body(patient);
+        try {
+            PatientDTO patient = patientService.getPatientById(id);
+            LOGGER.info("Returning patient with ID: {}", id);
+            return ResponseEntity.ok(patient);
+        } catch (NotFoundException e) {
+            LOGGER.warn("Patient not found with ID: {}", id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
-    public ResponseEntity<PatientDTO> savePatient(@NonNull @Valid @RequestBody final PatientDTO patient) {
+    public ResponseEntity<PatientDTO> savePatient(@Valid @RequestBody PatientDTO patient) {
         LOGGER.info("Received request to save a new patient");
-        PatientDTO savedPatient = patientService.savePatient(patient);
-        LOGGER.info("Saved new patient with ID: {}", savedPatient.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedPatient);
+        try {
+            PatientDTO savedPatient = patientService.savePatient(patient);
+            LOGGER.info("Saved new patient with ID: {}", savedPatient.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedPatient);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Invalid patient data: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<PatientDTO> updatePatient(@NonNull @PathVariable final Long id, @NonNull @Valid @RequestBody final PatientDTO patientDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<PatientDTO> updatePatient(@PathVariable Long id, @Valid @RequestBody PatientDTO patientDTO) {
         LOGGER.info("Received request to update patient with ID: {}", id);
-        PatientDTO updatedPatient = patientService.updatePatient(id, patientDTO);
-        LOGGER.info("Updated patient with ID: {}", id);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedPatient);
+        try {
+            PatientDTO updatedPatient = patientService.updatePatient(id, patientDTO);
+            LOGGER.info("Updated patient with ID: {}", id);
+            return ResponseEntity.ok(updatedPatient);
+        } catch (NotFoundException e) {
+            LOGGER.warn("Patient not found with ID: {}", id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deletePatientById(@NonNull @PathVariable final Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePatientById(@PathVariable Long id) {
         LOGGER.info("Received request to delete patient with ID: {}", id);
-        patientService.deletePatientById(id);
-        LOGGER.info("Deleted patient with ID: {}", id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        try {
+            patientService.deletePatientById(id);
+            LOGGER.info("Deleted patient with ID: {}", id);
+            return ResponseEntity.noContent().build();
+        } catch (NotFoundException e) {
+            LOGGER.warn("Patient not found with ID: {}", id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PatchMapping
-    public ResponseEntity<Void> changePassword(@NonNull @RequestBody final ChangePasswordRequestDTO request, @NonNull final Principal connectedUser) {
+    @PatchMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequestDTO request, Principal connectedUser) {
         LOGGER.info("Received request to change password for user: {}", connectedUser.getName());
-        patientService.changePassword(request, connectedUser);
-        LOGGER.info("Password changed successfully for user: {}", connectedUser.getName());
-        return ResponseEntity.ok().build();
+        try {
+            patientService.changePassword(request, connectedUser);
+            LOGGER.info("Password changed successfully for user: {}", connectedUser.getName());
+            return ResponseEntity.ok().build();
+        } catch (IllegalStateException e) {
+            LOGGER.warn("Failed to change password: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

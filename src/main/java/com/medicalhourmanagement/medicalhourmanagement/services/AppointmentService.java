@@ -1,6 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.services;
 
-import com.medicalhourmanagement.medicalhourmanagement.dtos.RequestAppointmentDTO;
+import com.medicalhourmanagement.medicalhourmanagement.dtos.request.RequestAppointmentDTO;
 import com.medicalhourmanagement.medicalhourmanagement.dtos.AppointmentDTO;
 import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
