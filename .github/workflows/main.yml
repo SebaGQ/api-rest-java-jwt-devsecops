@@ -205,15 +205,9 @@ jobs:
 
       - name: Descargar y descomprimir JMeter
         run: |
-          if [ ! -d "jmeter/bin" ]; then
-            echo "JMeter no encontrado, descargando..."
-            Invoke-WebRequest -Uri https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz -OutFile jmeter.tgz
-            New-Item -Path "jmeter" -ItemType Directory
-            tar -xf jmeter.tgz -C jmeter
-          else
-            echo "JMeter ya está instalado, omitiendo descarga"
-          fi
-        shell: bash
+          Invoke-WebRequest -Uri https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz -OutFile jmeter.tgz
+          New-Item -Path "jmeter" -ItemType Directory
+          tar -xf jmeter.tgz -C jmeter
 
       - name: Ejecutar pruebas de rendimiento con JMeter
         run: |
