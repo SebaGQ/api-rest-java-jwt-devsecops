@@ -204,9 +204,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Descargar y descomprimir JMeter
+        shell: pwsh
         run: |
-          curl -L https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz -o jmeter.tgz
-          mkdir jmeter
+          Invoke-WebRequest -Uri "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz" -OutFile "jmeter.tgz"
+          New-Item -ItemType Directory -Force -Path jmeter
           tar -xf jmeter.tgz -C jmeter
 
       - name: Ejecutar pruebas de rendimiento con JMeter
