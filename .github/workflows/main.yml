@@ -154,6 +154,7 @@ jobs:
             exit 1
           else
             echo "No vulnerabilities found."
+          fi
 
   DAST:
     needs: ImageAnalysis
