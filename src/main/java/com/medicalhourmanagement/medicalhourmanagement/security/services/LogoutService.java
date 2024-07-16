@@ -1,4 +1,4 @@
-package com.medicalhourmanagement.medicalhourmanagement.auth.services;
+package com.medicalhourmanagement.medicalhourmanagement.security.services;
 
 import com.medicalhourmanagement.medicalhourmanagement.constants.AuthConstants;
 import com.medicalhourmanagement.medicalhourmanagement.repositories.TokenRepository;

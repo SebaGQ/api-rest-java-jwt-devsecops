@@ -1,7 +1,7 @@
-package com.medicalhourmanagement.medicalhourmanagement.validators;
+package com.medicalhourmanagement.medicalhourmanagement.utils.validators;
 
 
-import com.medicalhourmanagement.medicalhourmanagement.auth.constraints.PasswordConstraint;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constraints.PasswordConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

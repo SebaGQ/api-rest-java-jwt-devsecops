@@ -1,7 +1,7 @@
-package com.medicalhourmanagement.medicalhourmanagement.dtos;
+package com.medicalhourmanagement.medicalhourmanagement.dtos.request;
 
 
-import com.medicalhourmanagement.medicalhourmanagement.auth.constraints.PasswordConstraint;
+import com.medicalhourmanagement.medicalhourmanagement.utils.constraints.PasswordConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

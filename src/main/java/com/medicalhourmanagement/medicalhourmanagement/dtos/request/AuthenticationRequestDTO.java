@@ -1,4 +1,4 @@
-package com.medicalhourmanagement.medicalhourmanagement.dtos;
+package com.medicalhourmanagement.medicalhourmanagement.dtos.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

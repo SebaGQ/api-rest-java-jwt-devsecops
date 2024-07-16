@@ -1,4 +1,4 @@
-package com.medicalhourmanagement.medicalhourmanagement.auth.services;
+package com.medicalhourmanagement.medicalhourmanagement.security.services;
 
 import com.medicalhourmanagement.medicalhourmanagement.constants.AuthConstants;
 import com.medicalhourmanagement.medicalhourmanagement.exceptions.dtos.ExpiredTokenException;
@@ -81,7 +81,7 @@ public class JwtService {
             .setSubject(userDetails.getUsername())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + expiration))
-            .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+            .signWith(getSignInKey(), SignatureAlgorithm.HS512)
             .compact();
   }
 

@@ -1,12 +1,10 @@
-package com.medicalhourmanagement.medicalhourmanagement.dtos;
+package com.medicalhourmanagement.medicalhourmanagement.dtos.request;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
-@Builder
+@NoArgsConstructor
 public class ChangePasswordRequestDTO {
 
     private String currentPassword;

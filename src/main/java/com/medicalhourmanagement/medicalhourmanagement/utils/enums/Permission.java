@@ -1,4 +1,4 @@
-package com.medicalhourmanagement.medicalhourmanagement.enums;
+package com.medicalhourmanagement.medicalhourmanagement.utils.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

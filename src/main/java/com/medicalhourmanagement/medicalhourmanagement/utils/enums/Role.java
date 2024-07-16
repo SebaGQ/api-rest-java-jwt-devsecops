@@ -1,4 +1,4 @@
-package com.medicalhourmanagement.medicalhourmanagement.enums;
+package com.medicalhourmanagement.medicalhourmanagement.utils.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.medicalhourmanagement.medicalhourmanagement.enums.Permission.*;
+import static com.medicalhourmanagement.medicalhourmanagement.utils.enums.Permission.*;
 
 //Cualquier cambio hecho aca debe comprobarse en RoleConstants
 @RequiredArgsConstructor

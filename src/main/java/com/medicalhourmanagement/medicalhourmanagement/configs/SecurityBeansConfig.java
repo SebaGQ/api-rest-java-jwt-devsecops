@@ -1,4 +1,4 @@
-package com.medicalhourmanagement.medicalhourmanagement.auth.configs;
+package com.medicalhourmanagement.medicalhourmanagement.configs;
 
 
 import com.medicalhourmanagement.medicalhourmanagement.constants.ExceptionMessageConstants;

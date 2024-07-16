@@ -1,7 +1,6 @@
 package com.medicalhourmanagement.medicalhourmanagement.entities;
 
-
-import com.medicalhourmanagement.medicalhourmanagement.enums.TokenType;
+import com.medicalhourmanagement.medicalhourmanagement.utils.enums.TokenType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +29,6 @@ public class Token {
   private boolean expired;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "patient_id")
-  public Patient patient;
+  @JoinColumn(name = "user_id")
+  public User user;
 }

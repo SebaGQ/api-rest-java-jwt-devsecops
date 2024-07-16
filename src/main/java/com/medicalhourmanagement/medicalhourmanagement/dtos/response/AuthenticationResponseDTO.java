@@ -1,4 +1,4 @@
-package com.medicalhourmanagement.medicalhourmanagement.dtos;
+package com.medicalhourmanagement.medicalhourmanagement.dtos.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

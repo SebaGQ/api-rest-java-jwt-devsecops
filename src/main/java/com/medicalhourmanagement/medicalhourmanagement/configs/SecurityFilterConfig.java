@@ -1,13 +1,12 @@
-package com.medicalhourmanagement.medicalhourmanagement.auth.configs;
+package com.medicalhourmanagement.medicalhourmanagement.configs;
 
-import com.medicalhourmanagement.medicalhourmanagement.auth.filters.JwtAuthFilter;
+import com.medicalhourmanagement.medicalhourmanagement.security.filters.JwtAuthFilter;
 import com.medicalhourmanagement.medicalhourmanagement.constants.EndpointsConstants;
 import com.medicalhourmanagement.medicalhourmanagement.constants.RoleConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,7 +21,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityFilterConfig {
 
@@ -37,31 +35,26 @@ public class SecurityFilterConfig {
     };
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                // Se deshabilita csrf para no entorpecer pruebas de peticiones
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        // Recomendable comenzar especificando cuáles endpoints NO requieren auth, y terminar con un .anyRequest().authenticated()
-                        // En lugar de permitir todos y especificar cuales sí requieren auth.
                         req
                                 .requestMatchers(WHITE_LIST_URL).permitAll()
                                 .requestMatchers(GET, EndpointsConstants.ENDPOINT_DOCTORS_PATTERN).authenticated()
-                                .requestMatchers(POST, EndpointsConstants.ENDPOINT_DOCTORS_PATTERN).hasRole(RoleConstants.ROLE_ADMIN)
-                                .requestMatchers(PUT, EndpointsConstants.ENDPOINT_DOCTORS_PATTERN).hasRole(RoleConstants.ROLE_ADMIN)
-                                .requestMatchers(DELETE, EndpointsConstants.ENDPOINT_DOCTORS_PATTERN).hasRole(RoleConstants.ROLE_ADMIN)
+                                .requestMatchers(POST, EndpointsConstants.ENDPOINT_DOCTORS_PATTERN).hasAnyRole(RoleConstants.ROLE_ADMIN)
+                                .requestMatchers(PUT, EndpointsConstants.ENDPOINT_DOCTORS_PATTERN).hasAnyRole(RoleConstants.ROLE_ADMIN)
+                                .requestMatchers(DELETE, EndpointsConstants.ENDPOINT_DOCTORS_PATTERN).hasAnyRole(RoleConstants.ROLE_ADMIN)
 
-                                .requestMatchers(GET, EndpointsConstants.ENDPOINT_PATIENTS_PATTERN).authenticated()
-                                .requestMatchers(POST, EndpointsConstants.ENDPOINT_PATIENTS_PATTERN).hasRole(RoleConstants.ROLE_ADMIN)
-                                .requestMatchers(PUT, EndpointsConstants.ENDPOINT_PATIENTS_PATTERN).hasRole(RoleConstants.ROLE_ADMIN)
-                                .requestMatchers(DELETE, EndpointsConstants.ENDPOINT_PATIENTS_PATTERN).hasRole(RoleConstants.ROLE_ADMIN)
+                                .requestMatchers(GET, EndpointsConstants.ENDPOINT_PATIENTS_PATTERN).hasAnyRole(RoleConstants.ROLE_ADMIN, RoleConstants.ROLE_MANAGER)
+                                .requestMatchers(POST, EndpointsConstants.ENDPOINT_PATIENTS_PATTERN).hasAnyRole(RoleConstants.ROLE_ADMIN)
+                                .requestMatchers(PUT, EndpointsConstants.ENDPOINT_PATIENTS_PATTERN).hasAnyRole(RoleConstants.ROLE_ADMIN)
+                                .requestMatchers(DELETE, EndpointsConstants.ENDPOINT_PATIENTS_PATTERN).hasAnyRole(RoleConstants.ROLE_ADMIN)
 
                                 .requestMatchers(GET, EndpointsConstants.ENDPOINT_APPOINTMENTS_PATTERN).authenticated()
-                                // Se debe permitir que el usuario registre citas, solo se debe validar que si el rol es USER, el rut de la cita registrada solo puede ser propio
                                 .requestMatchers(POST, EndpointsConstants.ENDPOINT_APPOINTMENTS_PATTERN).authenticated()
-                                .requestMatchers(PUT, EndpointsConstants.ENDPOINT_APPOINTMENTS_PATTERN).hasRole(RoleConstants.ROLE_MANAGER)
-                                .requestMatchers(DELETE, EndpointsConstants.ENDPOINT_APPOINTMENTS_PATTERN).hasRole(RoleConstants.ROLE_MANAGER)
+                                .requestMatchers(PUT, EndpointsConstants.ENDPOINT_APPOINTMENTS_PATTERN).hasAnyRole(RoleConstants.ROLE_MANAGER, RoleConstants.ROLE_ADMIN)
+                                .requestMatchers(DELETE, EndpointsConstants.ENDPOINT_APPOINTMENTS_PATTERN).hasAnyRole(RoleConstants.ROLE_MANAGER, RoleConstants.ROLE_ADMIN)
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
