@@ -8,7 +8,7 @@
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
         <collectionProp name="Arguments.arguments">
           <elementProp name="username" elementType="Argument">
-            <stringProp name="Argument.name">email</stringProp>
+            <stringProp name="Argument.name">username</stringProp>
             <stringProp name="Argument.value">admin2@email.com</stringProp>
           </elementProp>
           <elementProp name="password" elementType="Argument">
@@ -49,6 +49,17 @@
           <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
         </ConfigTestElement>
         <hashTree/>
+
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Register" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
@@ -76,6 +87,7 @@
           <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
         </HTTPSamplerProxy>
         <hashTree/>
+
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Authenticate" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
@@ -113,6 +125,7 @@
           </RegexExtractor>
           <hashTree/>
         </hashTree>
+
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /appointments" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
@@ -139,6 +152,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
+
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /appointments" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
@@ -174,6 +188,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
+
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /appointments/{id}" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
@@ -200,6 +215,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
+
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /appointments/{id}" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
@@ -226,6 +242,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
+
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
