@@ -75,7 +75,14 @@ El proyecto incluye un pipeline de DevSecOps implementado con GitHub Actions. Es
 
 El pipeline está configurado en el archivo `.github/workflows/main.yml`.
 
+### Diagrama del Pipeline
+
+![Diagrama del Pipeline DevSecOps](pipeline-diagram.png)
+Este diagrama muestra el flujo completo del pipeline, desde que el desarrollador sube el código hasta el despliegue en producción, pasando por todas las etapas de seguridad y calidad.
+
 ## Detalles del Pipeline DevSecOps
+
+Aquellos pasos que consideran detención del pipeline se están bypasseando para facilitar el desarrollo.
 
 ### SAST (Static Application Security Testing)
 - Utiliza SonarCloud para el análisis de código estático.
@@ -357,7 +364,7 @@ Se usa swagger para documentar de manera automatizada los endpoints del proyecto
 
 ### 17. Aplicación de Principios de Clean Code
 
-Se implementan principios de Clean Code a lo largo del proyecto, especialmente en la capa de servicio. Esto incluye métodos con responsabilidad única, nombres descriptivos, y una estructura clara y lógica del código.
+Se implementan principios de Clean Code a lo largo del proyecto, especialmente en la capa de servicio. Esto incluye métodos con responsabilidad única, nombres descriptivos, y una estructura clara y lógica del código. 
 
 **Impacto:** Mejora significativamente la legibilidad, mantenibilidad y escalabilidad del código.
 
