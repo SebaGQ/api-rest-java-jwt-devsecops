@@ -17,6 +17,7 @@ import com.medicalhourmanagement.medicalhourmanagement.services.AuthenticationSe
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -136,7 +137,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             .expired(false)
             .revoked(false)
             .build();
-    tokenRepository.save(token);
+    try {
+      tokenRepository.save(token);
+    } catch (DataIntegrityViolationException e) {
+      // Si el token ya existe, se actualiza
+      Token existingToken = tokenRepository.findByAccessToken(jwtToken)
+              .orElseThrow(() -> new RuntimeException("Deberia haber token pero no se encontro"));
+      existingToken.setExpired(false);
+      existingToken.setRevoked(false);
+      tokenRepository.save(existingToken);
+    }
   }
 
   private void revokeAllUserTokens(Patient patient) {
