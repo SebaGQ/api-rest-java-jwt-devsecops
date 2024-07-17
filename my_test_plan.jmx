@@ -7,7 +7,7 @@
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
         <collectionProp name="Arguments.arguments">
-          <elementProp name="username" elementType="Argument">
+          <elementProp name="email" elementType="Argument">
             <stringProp name="Argument.name">email</stringProp>
             <stringProp name="Argument.value">admin2@email.com</stringProp>
           </elementProp>
