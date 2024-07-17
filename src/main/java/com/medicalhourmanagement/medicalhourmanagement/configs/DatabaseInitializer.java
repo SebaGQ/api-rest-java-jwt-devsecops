@@ -10,6 +10,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+
+
+
+/*
+Esta clase tiene propositos de prueba, esto en producción es ilegalXD
+ */
 @Component
 @RequiredArgsConstructor
 public class DatabaseInitializer implements CommandLineRunner {
@@ -21,19 +27,18 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Inicializar doctores
-        if (doctorRepository.count() == 0) {
             Doctor doctor = Doctor.builder()
-                    .firstName("John")
-                    .lastName("Doe")
+                    .firstName("Doctor John")
+                    .lastName("Doctor Doe")
                     .email("admin@email.com")
                     .password(passwordEncoder.encode("admin12345"))
                     .role(Role.ADMIN)
                     .build();
             doctorRepository.save(doctor);
-        }
+
 
         // Inicializar pacientes
-        if (patientRepository.count() == 0) {
+
             Patient patient = Patient.builder()
                     .firstName("Jane")
                     .lastName("Doe")
@@ -44,6 +49,6 @@ public class DatabaseInitializer implements CommandLineRunner {
                     .address("123 Main St")
                     .build();
             patientRepository.save(patient);
-        }
+
     }
 }
