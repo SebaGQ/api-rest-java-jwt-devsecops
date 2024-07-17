@@ -1,6 +1,6 @@
 # Proyecto de Gestión de Horas Médicas
 
-Este proyecto es una aplicación de gestión de horas médicas desarrollada con Java Spring Boot.
+Este proyecto es una aplicación de gestión de horas médicas desarrollada con Java Spring Boot. Incluye un pipeline DevSecOps implementado con GitHub Actions, que automatiza el proceso de integración continua, entrega continua y seguridad continua.
 
 La lógica de negocio de la aplicación es simple, pero se implementa un conjunto de buenas prácticas de desarrollo de software que mejoran la calidad, mantenibilidad y seguridad del código.
 
@@ -8,10 +8,12 @@ La lógica de negocio de la aplicación es simple, pero se implementa un conjunt
 
 ## Estructura del Proyecto
 
-
-
 ```
 medical-hour-management/
+│
+├── .github/
+│   └── workflows/
+│       └── main.yml
 │
 ├── src/
 │   └── main/
@@ -36,8 +38,9 @@ medical-hour-management/
 │      │   └── MedicalHourManagementApplication.java
 │      │
 │      └── resources/
-│          ├── application.yml
-│          ├── application-dev.yml
+│          ├── application.properties
+│          ├── application-dev.properties
+│          ├── application-prod.properties
 │   
 ├── .gitignore
 ├── mvnw
@@ -58,6 +61,41 @@ medical-hour-management/
 - `exceptions/`: Manejo centralizado de excepciones.
 - `repositories/`: Interfaces de repositorio para el acceso a datos.
 - `services/`: Servicios que contienen la lógica de negocio.
+
+## Pipeline DevSecOps
+
+El proyecto incluye un pipeline de DevSecOps implementado con GitHub Actions. Este pipeline automatiza varios aspectos del desarrollo, pruebas y despliegue, incluyendo:
+
+- Compilación y pruebas unitarias
+- Análisis de código estático (SAST) con SonarCloud
+- Análisis de composición de software (SCA)
+- Construcción y escaneo de imágenes Docker
+- Pruebas de seguridad de aplicaciones dinámicas (DAST)
+- Despliegue automatizado en un cluster de Kubernetes
+
+El pipeline está configurado en el archivo `.github/workflows/main.yml`.
+
+## Detalles del Pipeline DevSecOps
+
+### SAST (Static Application Security Testing)
+- Utiliza SonarCloud para el análisis de código estático.
+- Se configuró un Quality Profile personalizado para detectar solo vulnerabilidades con un nivel de severidad específico.
+- El Quality Gate se configuró para detener el pipeline basado en estas vulnerabilidades.
+
+### SCA (Software Composition Analysis)
+- Utiliza Dependency Check (action: dependency-check/Dependency-Check_Action@main).
+- Genera reportes en formato SARIF para su visualización en la pestaña de Seguridad de GitHub.
+- Configurado para detener el pipeline ante vulnerabilidades de severidad media o superior (CVSS >= 4).
+
+### Análisis de Imagen
+- Utiliza Trivy para escanear las imágenes Docker.
+- Genera reportes en formato SARIF.
+- Se implementó un paso adicional para contar las vulnerabilidades y detener el pipeline si se encuentran vulnerabilidades Medias, Altas o Críticas.
+
+### DAST (Dynamic Application Security Testing)
+- Utiliza OWASP ZAP (action: zaproxy/action-baseline@v0.12.0).
+- Genera reportes en formatos HTML, Markdown y JSON.
+- Los resultados se suben automáticamente a la pestaña de Issues del repositorio en GitHub.
 
 
 
@@ -372,3 +410,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 }
 ```
+
+
+## Pendiente por hacer:
+Se están implementando pruebas de rendimiento con JMeter, eso está casi completo, aún falta mejorar el manejo del token en las solicitudes.
