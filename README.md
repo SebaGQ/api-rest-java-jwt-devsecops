@@ -5,6 +5,7 @@ Este proyecto es una aplicación de gestión de horas médicas desarrollada con 
 La lógica de negocio de la aplicación es simple, pero se implementa un conjunto de buenas prácticas de desarrollo de software que mejoran la calidad, mantenibilidad y seguridad del código.
 
 
+Aún se está trabajando sobre este repositorio.
 
 ## Estructura del Proyecto
 
@@ -422,6 +423,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 
 ## Pendiente por hacer:
-Se están implementando pruebas de rendimiento con JMeter, eso está casi completo, aún falta mejorar el manejo del token en las solicitudes.
+- Se están implementando pruebas de rendimiento con JMeter, eso está casi completo, aún falta implementar el manejo del token en las solicitudes.
 
-Solucionar algunos problemas de seguridad identificados por las herramientas de seguridad.
+- Solucionar algunos problemas de seguridad identificados por las herramientas de seguridad.
