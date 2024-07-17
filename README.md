@@ -414,3 +414,5 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 ## Pendiente por hacer:
 Se están implementando pruebas de rendimiento con JMeter, eso está casi completo, aún falta mejorar el manejo del token en las solicitudes.
+
+Solucionar algunos problemas de seguridad identificados por las herramientas de seguridad.
