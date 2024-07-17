@@ -82,7 +82,7 @@ Este diagrama muestra el flujo completo del pipeline, desde que el desarrollador
 
 ## Detalles del Pipeline DevSecOps
 
-Aquellos pasos que consideran detención del pipeline se están bypasseando para facilitar el desarrollo.
+En aquellos pasos que consideran detención del pipeline se está bypasseando la detención para facilitar el desarrollo.
 
 ### SAST (Static Application Security Testing)
 - Utiliza SonarCloud para el análisis de código estático.
@@ -107,6 +107,8 @@ Aquellos pasos que consideran detención del pipeline se están bypasseando para
 
 
 ## Buenas Prácticas Implementadas
+
+En este apartado se mencionan y detallan algunas de las buenas prácticas que he aprendido a lo largo de mi experiencia en desarrollo y que están implementadas en este proyecto.
 
 ### 1. Arquitectura en Capas
 
