@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+
 @RestController
 @RequestMapping(EndpointsConstants.ENDPOINT_APPOINTMENTS)
 @RequiredArgsConstructor
@@ -25,6 +30,16 @@ public class AppointmentController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
     private final AppointmentService appointmentService;
 
+    @Operation(
+        summary = "Get all appointments",
+        description = "Retrieve all medical appointments"
+    )
+    
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Appointments retrieved successfully"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    
     @GetMapping
     public ResponseEntity<List<AppointmentDTO>> getAppointments() {
         LOGGER.info("Received request to get all appointments");
@@ -33,8 +48,17 @@ public class AppointmentController {
         return ResponseEntity.ok(appointments);
     }
 
+    @Operation(summary = "Get appointment by ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Appointment found"),
+        @ApiResponse(responseCode = "404", description = "Appointment not found")
+    })
+    
     @GetMapping("/{id}")
-    public ResponseEntity<AppointmentDTO> getAppointmentById(@NonNull @PathVariable final Long id) {
+        public ResponseEntity<AppointmentDTO> getAppointmentById(
+        @Parameter(description = "ID of the appointment")
+        @NonNull @PathVariable final Long id
+        ) {
         LOGGER.info("Received request to get appointment with ID: {}", id);
         try {
             AppointmentDTO appointment = appointmentService.getAppointmentById(id);
